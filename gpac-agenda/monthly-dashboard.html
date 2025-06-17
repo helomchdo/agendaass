@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GPAC Agenda - Dashboard Mensal</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+  <style>
+    #calendar {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+    .filters {
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .filters label {
+      font-weight: 600;
+    }
+    .filters select {
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+      border: 1px solid #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="card">
+      <h1>Dashboard de Agenda Mensal</h1>
+      <div class="filters">
+        <div>
+          <label for="eventTypeFilter">Tipo de evento</label>
+          <select id="eventTypeFilter">
+            <option value="">Todos</option>
+            <option value="reuniao">Reunião</option>
+            <option value="apresentacao">Apresentação</option>
+            <option value="visita">Visita</option>
+          </select>
+        </div>
+        <div>
+          <label for="locationFilter">Local</label>
+          <select id="locationFilter">
+            <option value="">Todos</option>
+            <option value="sala1">Sala 1</option>
+            <option value="sala2">Sala 2</option>
+          </select>
+        </div>
+        <div>
+          <label for="focalPointFilter">Ponto focal</label>
+          <select id="focalPointFilter">
+            <option value="">Todos</option>
+            <option value="usuario1">Usuário 1</option>
+            <option value="usuario2">Usuário 2</option>
+          </select>
+        </div>
+      </div>
+      <div id="calendar"></div>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script src="monthly-dashboard.js"></script>
+</body>
+</html>
