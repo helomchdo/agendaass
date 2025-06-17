@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GPAC Agenda - Cadastro de Ação</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <main class="container">
+    <div class="card">
+      <h1>Formulário de Cadastro de Ação</h1>
+      <form id="actionForm">
+        <label for="seiNumber">Número do SEI</label>
+        <input type="text" id="seiNumber" name="seiNumber" placeholder="Número do SEI" required />
+
+        <label for="sendDate">Data de envio</label>
+        <input type="date" id="sendDate" name="sendDate" required />
+
+        <label for="subject">Assunto</label>
+        <input type="text" id="subject" name="subject" placeholder="Assunto" required />
+
+        <label for="requester">Solicitante</label>
+        <input type="text" id="requester" name="requester" placeholder="Solicitante" required />
+
+        <label for="location">Local</label>
+        <input type="text" id="location" name="location" placeholder="Local" required />
+
+        <label for="focalPoint">Ponto focal</label>
+        <input type="text" id="focalPoint" name="focalPoint" placeholder="Ponto focal" required />
+
+        <label for="date">Data</label>
+        <input type="date" id="date" name="date" required />
+
+        <label for="status">Situação</label>
+        <select id="status" name="status" required>
+          <option value="">Selecionar</option>
+          <option value="SOLICITADO">SOLICITADO</option>
+          <option value="ARTICULADO">ARTICULADO</option>
+          <option value="REALIZADA">REALIZADA</option>
+          <option value="CANCELADO_PELO_SOLICITANTE">CANCELADO PELO SOLICITANTE</option>
+          <option value="ATENDIDO">ATENDIDO</option>
+        </select>
+
+        <label for="seiRequest">SEI de solicitação das diárias</label>
+        <input type="text" id="seiRequest" name="seiRequest" placeholder="SEI de solicitação das diárias" />
+
+        <div class="form-buttons">
+          <button type="submit" class="btn-primary">Próximo Passo</button>
+          <button type="reset" class="btn-secondary">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </main>
+  <script src="action-form.js"></script>
+</body>
+</html>
