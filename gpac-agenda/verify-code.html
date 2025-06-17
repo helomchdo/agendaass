@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GPAC Agenda - Inserir Código</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <main class="container">
+    <div class="card">
+      <h1>Inserir Código Recebido</h1>
+      <form id="verifyCodeForm">
+        <label for="code">Código</label>
+        <input type="text" id="code" name="code" placeholder="Código recebido por email" required />
+        <button type="submit" class="btn-primary">Verificar Código</button>
+      </form>
+      <div class="links">
+        <a href="password-reset.html">Voltar</a>
+      </div>
+    </div>
+  </main>
+  <script src="verify-code.js"></script>
+</body>
+</html>
