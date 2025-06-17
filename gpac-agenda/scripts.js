@@ -1,32 +1,21 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("loginForm");
-  if (loginForm) {
-    loginForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
+import { supabase } from './supabaseclient.js'
 
-      if (!username || !password) {
-        alert("Por favor, preencha todos os campos.");
-        return;
-      }
+document.getElementById('loginForm').addEventListener('submit', async (event) => {
+  event.preventDefault()
 
-      // Simple login validation (for demo purposes)
-      // In real app, replace with backend authentication
-      if (username === "usuario" && password === "senha123") {
-        alert("Login bem-sucedido!");
-        window.location.href = "daily-agenda.html"; // Redirect to next page
-      } else {
-        alert("Usuário ou senha inválidos.");
-      }
-    });
+  const email = document.getElementById('email').value
+  const senha = document.getElementById('password').value
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: senha
+  })
+
+  if (error) {
+    alert('Erro ao fazer login: ' + error.message)
+  } else {
+    alert('Login feito com sucesso!')
+    
+    window.location.href = 'daily-agenda.html'
   }
-
-  const googleLogin = document.getElementById("googleLogin");
-  if (googleLogin) {
-    googleLogin.addEventListener("click", (e) => {
-      e.preventDefault();
-      alert("Login com Google não implementado.");
-    });
-  }
-});
+})
