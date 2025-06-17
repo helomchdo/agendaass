@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GPAC Agenda - Agenda Diária</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+  <style>
+    .agenda-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .agenda-item {
+      border-bottom: 1px solid #cbd5e1;
+      padding: 0.75rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .agenda-item:last-child {
+      border-bottom: none;
+    }
+    .agenda-time {
+      font-weight: 600;
+      color: #2563eb;
+      min-width: 60px;
+    }
+    .agenda-description {
+      flex-grow: 1;
+      margin-left: 1rem;
+    }
+    .highlight {
+      background-color: #e0f2fe;
+      border-radius: 0.375rem;
+      padding: 0.5rem;
+      transition: background-color 0.3s ease;
+    }
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .nav-buttons button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.2s ease;
+    }
+    .nav-buttons button:hover {
+      background-color: #1e40af;
+    }
+    .empty-state {
+      text-align: center;
+      color: #64748b;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="card">
+      <h1>Agenda Diária</h1>
+      <p id="currentDate" class="text-center font-semibold mb-4"></p>
+      <div class="nav-buttons">
+        <button id="prevDay">Anterior</button>
+        <button id="nextDay">Próximo</button>
+      </div>
+      <ul id="agendaList" class="agenda-list"></ul>
+      <p id="emptyState" class="empty-state" style="display:none;">
+        Nenhum compromisso agendado.<br />
+        Não há eventos para esta data.
+      </p>
+    </div>
+  </main>
+  <script src="daily-agenda.js"></script>
+</body>
+</html>
