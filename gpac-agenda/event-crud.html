@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GPAC Agenda - CRUD de Evento</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+  <style>
+    .event-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1rem 0;
+    }
+    .event-item {
+      border: 1px solid #cbd5e1;
+      border-radius: 0.375rem;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .event-details {
+      flex-grow: 1;
+      margin-right: 1rem;
+    }
+    .event-actions button {
+      margin-left: 0.5rem;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.2s ease;
+    }
+    .event-actions button:hover {
+      background-color: #1e40af;
+    }
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      width: 90%;
+      max-width: 400px;
+    }
+    .modal-content h2 {
+      margin-bottom: 1rem;
+    }
+    .modal-content label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+    .modal-content input,
+    .modal-content textarea,
+    .modal-content select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.375rem;
+    }
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+    .modal-buttons button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-cancel {
+      background-color: #e5e7eb;
+      color: #374151;
+    }
+    .btn-save {
+      background-color: #2563eb;
+      color: white;
+    }
+    .btn-cancel:hover {
+      background-color: #d1d5db;
+    }
+    .btn-save:hover {
+      background-color: #1e40af;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="card">
+      <h1>CRUD de Evento</h1>
+      <button id="btnAddEvent" class="btn-primary" style="margin-bottom:1rem;">Criar novo evento</button>
+      <ul id="eventList" class="event-list"></ul>
+    </div>
+
+    <div id="eventModal" class="modal">
+      <div class="modal-content">
+        <h2 id="modalTitle">Novo Evento</h2>
+        <form id="eventForm">
+          <label for="eventTitle">Título</label>
+          <input type="text" id="eventTitle" name="eventTitle" required />
+
+          <label for="eventDateTime">Data/Hora</label>
+          <input type="datetime-local" id="eventDateTime" name="eventDateTime" required />
+
+          <label for="eventLocation">Local</label>
+          <input type="text" id="eventLocation" name="eventLocation" required />
+
+          <label for="eventDescription">Descrição</label>
+          <textarea id="eventDescription" name="eventDescription" rows="3"></textarea>
+
+          <label for="eventParticipants">Participantes</label>
+          <input type="text" id="eventParticipants" name="eventParticipants" placeholder="Separados por vírgula" />
+
+          <label for="eventReminders">Lembretes</label>
+          <input type="text" id="eventReminders" name="eventReminders" placeholder="Configurações de lembretes" />
+
+          <div class="modal-buttons">
+            <button type="button" class="btn-cancel" id="btnCancel">Cancelar</button>
+            <button type="submit" class="btn-save">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+  <script src="event-crud.js"></script>
+</body>
+</html>
