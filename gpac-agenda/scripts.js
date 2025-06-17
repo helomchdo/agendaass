@@ -1,4 +1,3 @@
-// Basic login form submission handler
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
   if (loginForm) {
@@ -12,8 +11,14 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // TODO: Implement actual login logic here
-      alert(`Login realizado com usuário: ${username}`);
+      // Simple login validation (for demo purposes)
+      // In real app, replace with backend authentication
+      if (username === "usuario" && password === "senha123") {
+        alert("Login bem-sucedido!");
+        window.location.href = "daily-agenda.html"; // Redirect to next page
+      } else {
+        alert("Usuário ou senha inválidos.");
+      }
     });
   }
 
