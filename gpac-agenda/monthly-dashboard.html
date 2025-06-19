@@ -5,60 +5,240 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GPAC Agenda - Dashboard Mensal</title>
   <link rel="stylesheet" href="styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <style>
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .dashboard-title {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .filters-container {
+      background-color: #ffffff;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .filters-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #4b5563;
+      margin-bottom: 1rem;
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .filter-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #6b7280;
+    }
+
+    .filter-select {
+      padding: 0.625rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      color: #1f2937;
+      background-color: #f9fafb;
+      transition: all 0.2s;
+    }
+
+    .filter-select:hover {
+      border-color: #d1d5db;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      ring: 2px #93c5fd;
+    }
+
+    .calendar-container {
+      background-color: #ffffff;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
     #calendar {
       max-width: 100%;
-      margin: 0 auto;
+      height: 700px;
     }
-    .filters {
-      margin-bottom: 1rem;
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
+
+    .fc {
+      font-family: 'Inter', sans-serif;
     }
-    .filters label {
+
+    .fc-toolbar-title {
+      font-size: 1.25rem !important;
+      font-weight: 600 !important;
+    }
+
+    .fc-button-primary {
+      background-color: #3b82f6 !important;
+      border-color: #3b82f6 !important;
+      font-weight: 500 !important;
+    }
+
+    .fc-button-primary:hover {
+      background-color: #2563eb !important;
+      border-color: #2563eb !important;
+    }
+
+    .fc-event {
+      border-radius: 0.25rem;
+      padding: 0.25rem;
+      font-size: 0.875rem;
+    }
+
+    .fc-event-title {
+      font-weight: 500;
+    }
+
+    .fc-day-today {
+      background-color: #f3f4f6 !important;
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background-color: #ffffff;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-title {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
       font-weight: 600;
+      color: #1f2937;
     }
-    .filters select {
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.375rem;
-      border: 1px solid #cbd5e1;
+
+    .stat-icon {
+      float: right;
+      font-size: 1.5rem;
+      color: #3b82f6;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        padding: 1rem;
+      }
+
+      .dashboard-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+
+      .filters-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <main class="container">
-    <div class="card">
-      <h1>Dashboard de Agenda Mensal</h1>
-      <div class="filters">
-        <div>
-          <label for="eventTypeFilter">Tipo de evento</label>
-          <select id="eventTypeFilter">
+  <main class="dashboard-container">
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">Dashboard de Agenda Mensal</h1>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <i class="fas fa-calendar-check stat-icon"></i>
+        <div class="stat-title">Total de Eventos</div>
+        <div class="stat-value" id="totalEvents">0</div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-clock stat-icon"></i>
+        <div class="stat-title">Eventos Hoje</div>
+        <div class="stat-value" id="todayEvents">0</div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-users stat-icon"></i>
+        <div class="stat-title">Participantes</div>
+        <div class="stat-value" id="totalParticipants">0</div>
+      </div>
+    </div>
+
+    <div class="filters-container">
+      <h2 class="filters-title">Filtros</h2>
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label class="filter-label" for="eventTypeFilter">
+            <i class="fas fa-tag"></i> Tipo de evento
+          </label>
+          <select class="filter-select" id="eventTypeFilter">
             <option value="">Todos</option>
             <option value="reuniao">Reunião</option>
             <option value="apresentacao">Apresentação</option>
             <option value="visita">Visita</option>
           </select>
         </div>
-        <div>
-          <label for="locationFilter">Local</label>
-          <select id="locationFilter">
+        <div class="filter-group">
+          <label class="filter-label" for="locationFilter">
+            <i class="fas fa-map-marker-alt"></i> Local
+          </label>
+          <select class="filter-select" id="locationFilter">
             <option value="">Todos</option>
             <option value="sala1">Sala 1</option>
             <option value="sala2">Sala 2</option>
           </select>
         </div>
-        <div>
-          <label for="focalPointFilter">Ponto focal</label>
-          <select id="focalPointFilter">
+        <div class="filter-group">
+          <label class="filter-label" for="focalPointFilter">
+            <i class="fas fa-user"></i> Ponto focal
+          </label>
+          <select class="filter-select" id="focalPointFilter">
             <option value="">Todos</option>
             <option value="usuario1">Usuário 1</option>
             <option value="usuario2">Usuário 2</option>
           </select>
         </div>
       </div>
+    </div>
+
+    <div class="calendar-container">
       <div id="calendar"></div>
     </div>
   </main>

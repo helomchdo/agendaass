@@ -1,3 +1,5 @@
+import { eventAPI } from './services/api.js';
+
 document.addEventListener("DOMContentLoaded", () => {
   const eventList = document.getElementById("eventList");
   const eventModal = document.getElementById("eventModal");
@@ -8,6 +10,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let events = [];
   let editingEventId = null;
+
+  async function loadEvents() {
+    try {
+      events = await eventAPI.getAllEvents();
+      renderEvents();
+    } catch (error) {
+      console.error('Error loading events:', error);
+      alert('Failed to load events. Please try again.');
+    }
+  }
 
   function renderEvents() {
     eventList.innerHTML = "";
@@ -27,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
       detailsDiv.className = "event-details";
       detailsDiv.innerHTML = `
         <strong>${event.title}</strong><br/>
-        ${new Date(event.dateTime).toLocaleString("pt-BR")}<br/>
+        ${new Date(event.date_time).toLocaleString("pt-BR")}<br/>
         ${event.location}
       `;
 
@@ -44,10 +56,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const btnDelete = document.createElement("button");
       btnDelete.textContent = "Excluir";
-      btnDelete.addEventListener("click", () => {
+      btnDelete.addEventListener("click", async () => {
         if (confirm("Tem certeza que deseja excluir este evento?")) {
-          events = events.filter((e) => e.id !== event.id);
-          renderEvents();
+          try {
+            await eventAPI.deleteEvent(event.id);
+            await loadEvents(); // Reload events after deletion
+          } catch (error) {
+            console.error('Error deleting event:', error);
+            alert('Failed to delete event. Please try again.');
+          }
         }
       });
 
@@ -68,11 +85,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const event = events.find((e) => e.id === eventId);
       modalTitle.textContent = editable ? "Editar Evento" : "Detalhes do Evento";
       eventForm.eventTitle.value = event.title;
-      eventForm.eventDateTime.value = event.dateTime;
+      eventForm.eventDateTime.value = event.date_time.slice(0, 16); // Format datetime for input
       eventForm.eventLocation.value = event.location;
-      eventForm.eventDescription.value = event.description;
-      eventForm.eventParticipants.value = event.participants;
-      eventForm.eventReminders.value = event.reminders;
+      eventForm.eventDescription.value = event.description || '';
+      eventForm.eventParticipants.value = event.participants || '';
+      eventForm.eventReminders.value = event.reminders || '';
       Array.from(eventForm.elements).forEach((el) => {
         if (el.tagName !== "BUTTON") {
           el.disabled = !editable;
@@ -102,32 +119,36 @@ document.addEventListener("DOMContentLoaded", () => {
     closeModal();
   });
 
-  eventForm.addEventListener("submit", (e) => {
+  eventForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const newEvent = {
-      id: editingEventId || Date.now().toString(),
+    const eventData = {
       title: eventForm.eventTitle.value.trim(),
-      dateTime: eventForm.eventDateTime.value,
+      date_time: eventForm.eventDateTime.value,
       location: eventForm.eventLocation.value.trim(),
       description: eventForm.eventDescription.value.trim(),
       participants: eventForm.eventParticipants.value.trim(),
       reminders: eventForm.eventReminders.value.trim(),
     };
 
-    if (!newEvent.title || !newEvent.dateTime || !newEvent.location) {
+    if (!eventData.title || !eventData.date_time || !eventData.location) {
       alert("Por favor, preencha os campos obrigatórios.");
       return;
     }
 
-    if (editingEventId) {
-      events = events.map((e) => (e.id === editingEventId ? newEvent : e));
-    } else {
-      events.push(newEvent);
+    try {
+      if (editingEventId) {
+        await eventAPI.updateEvent(editingEventId, eventData);
+      } else {
+        await eventAPI.createEvent(eventData);
+      }
+      await loadEvents(); // Reload events after creation/update
+      closeModal();
+    } catch (error) {
+      console.error('Error saving event:', error);
+      alert('Failed to save event. Please try again.');
     }
-
-    renderEvents();
-    closeModal();
   });
 
-  renderEvents();
+  // Load events when the page loads
+  loadEvents();
 });

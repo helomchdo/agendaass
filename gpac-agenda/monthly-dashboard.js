@@ -1,78 +1,153 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const calendarEl = document.getElementById("calendar");
-  const eventTypeFilter = document.getElementById("eventTypeFilter");
-  const locationFilter = document.getElementById("locationFilter");
-  const focalPointFilter = document.getElementById("focalPointFilter");
+import { eventAPI } from './services/api.js';
 
-  // Sample events data
-  const allEvents = [
-    {
-      id: "1",
-      title: "Reunião de equipe",
-      start: "2025-06-03T10:00:00",
-      end: "2025-06-03T11:00:00",
-      type: "reuniao",
-      location: "sala1",
-      focalPoint: "usuario1",
-    },
-    {
-      id: "2",
-      title: "Apresentação do projeto",
-      start: "2025-06-07T14:00:00",
-      end: "2025-06-07T15:00:00",
-      type: "apresentacao",
-      location: "sala2",
-      focalPoint: "usuario2",
-    },
-    {
-      id: "3",
-      title: "Visita ao cliente",
-      start: "2025-06-15T09:00:00",
-      end: "2025-06-15T12:00:00",
-      type: "visita",
-      location: "sala1",
-      focalPoint: "usuario1",
-    },
-  ];
-
+document.addEventListener('DOMContentLoaded', function() {
   let calendar;
+  let events = [];
+  
+  // Initialize statistics
+  const statsElements = {
+    totalEvents: document.getElementById('totalEvents'),
+    todayEvents: document.getElementById('todayEvents'),
+    totalParticipants: document.getElementById('totalParticipants')
+  };
 
-  function filterEvents() {
-    const type = eventTypeFilter.value;
-    const location = locationFilter.value;
-    const focalPoint = focalPointFilter.value;
+  // Initialize filters
+  const filters = {
+    eventType: document.getElementById('eventTypeFilter'),
+    location: document.getElementById('locationFilter'),
+    focalPoint: document.getElementById('focalPointFilter')
+  };
 
-    return allEvents.filter((event) => {
-      return (
-        (type === "" || event.type === type) &&
-        (location === "" || event.location === location) &&
-        (focalPoint === "" || event.focalPoint === focalPoint)
-      );
-    });
+  // Add event listeners to filters
+  Object.values(filters).forEach(filter => {
+    filter.addEventListener('change', updateCalendarEvents);
+  });
+
+  async function fetchEvents() {
+    try {
+      events = await eventAPI.getAllEvents();
+      updateStatistics();
+      updateCalendarEvents();
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      alert('Failed to load events. Please try again.');
+    }
   }
 
-  function renderCalendar() {
-    if (calendar) {
-      calendar.destroy();
-    }
+  function updateStatistics() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: "dayGridMonth",
-      locale: "pt-br",
-      events: filterEvents(),
-      headerToolbar: {
-        left: "prev,next today",
-        center: "title",
-        right: "dayGridMonth,timeGridWeek,timeGridDay",
+    const todayEvents = events.filter(event => {
+      const eventDate = new Date(event.date_time);
+      eventDate.setHours(0, 0, 0, 0);
+      return eventDate.getTime() === today.getTime();
+    });
+
+    const totalParticipants = events.reduce((total, event) => {
+      const participantCount = event.participants ? event.participants.split(',').length : 0;
+      return total + participantCount;
+    }, 0);
+
+    statsElements.totalEvents.textContent = events.length;
+    statsElements.todayEvents.textContent = todayEvents.length;
+    statsElements.totalParticipants.textContent = totalParticipants;
+  }
+
+  function updateCalendarEvents() {
+    const filteredEvents = events.filter(event => {
+      const typeMatch = !filters.eventType.value || event.type === filters.eventType.value;
+      const locationMatch = !filters.location.value || event.location === filters.location.value;
+      const focalPointMatch = !filters.focalPoint.value || 
+        (event.participants && event.participants.includes(filters.focalPoint.value));
+      
+      return typeMatch && locationMatch && focalPointMatch;
+    });
+
+    const calendarEvents = filteredEvents.map(event => ({
+      id: event.id,
+      title: event.title,
+      start: event.date_time,
+      end: event.date_time,
+      extendedProps: {
+        location: event.location,
+        description: event.description,
+        participants: event.participants,
+        reminders: event.reminders
       },
+      backgroundColor: getEventColor(event.type)
+    }));
+
+    calendar.removeAllEvents();
+    calendar.addEventSource(calendarEvents);
+  }
+
+  function getEventColor(eventType) {
+    const colors = {
+      reuniao: '#3b82f6',      // Blue
+      apresentacao: '#10b981',  // Green
+      visita: '#8b5cf6',       // Purple
+      default: '#6b7280'       // Gray
+    };
+    return colors[eventType] || colors.default;
+  }
+
+  function initializeCalendar() {
+    const calendarEl = document.getElementById('calendar');
+    calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      buttonText: {
+        today: 'Hoje',
+        month: 'Mês',
+        week: 'Semana',
+        day: 'Dia'
+      },
+      locale: 'pt-br',
+      firstDay: 0,
+      weekNumbers: true,
+      weekNumberFormat: { week: 'numeric' },
+      dayMaxEvents: true,
+      eventTimeFormat: {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      },
+      eventClick: function(info) {
+        showEventDetails(info.event);
+      },
+      eventDidMount: function(info) {
+        info.el.setAttribute('data-tooltip', info.event.title);
+      }
     });
 
     calendar.render();
   }
 
-  eventTypeFilter.addEventListener("change", renderCalendar);
-  locationFilter.addEventListener("change", renderCalendar);
-  focalPointFilter.addEventListener("change", renderCalendar);
+  function showEventDetails(event) {
+    const eventTime = new Date(event.start).toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
 
-  renderCalendar();
+    const details = `
+      <h3>${event.title}</h3>
+      <p><strong>Horário:</strong> ${eventTime}</p>
+      <p><strong>Local:</strong> ${event.extendedProps.location}</p>
+      ${event.extendedProps.description ? `<p><strong>Descrição:</strong> ${event.extendedProps.description}</p>` : ''}
+      ${event.extendedProps.participants ? `<p><strong>Participantes:</strong> ${event.extendedProps.participants}</p>` : ''}
+      ${event.extendedProps.reminders ? `<p><strong>Lembretes:</strong> ${event.extendedProps.reminders}</p>` : ''}
+    `;
+
+    // You can implement your own modal or use a library like SweetAlert2
+    alert(details); // Replace this with a better modal implementation
+  }
+
+  // Initialize calendar and fetch events
+  initializeCalendar();
+  fetchEvents();
 });
