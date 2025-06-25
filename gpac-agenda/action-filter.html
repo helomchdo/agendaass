@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Filtragem de Ações</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #fafafa;
+      color: #333;
+    }
+
+    h1 {
+      margin-bottom: 24px;
+      color: #004085;
+    }
+
+    .filtros {
+      background: #fff;
+      padding: 20px;
+      border-radius: 6px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(240px, 1fr));
+      gap: 15px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    select:focus {
+      outline: none;
+      border-color: #0056b3;
+      box-shadow: 0 0 5px #0056b3;
+    }
+
+    #lista-acoes {
+      list-style-type: none;
+      padding-left: 0;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    #lista-acoes li {
+      background: #fff;
+      margin-bottom: 14px;
+      padding: 16px 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      line-height: 1.4;
+      font-size: 15px;
+      color: #222;
+    }
+
+    #lista-acoes li span {
+      display: inline-block;
+      min-width: 110px;
+      font-weight: 600;
+      color: #004085;
+    }
+
+    .sem-resultados {
+      text-align: center;
+      color: #777;
+      font-style: italic;
+      font-size: 16px;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Filtro de Ações</h1>
+
+  <div class="filtros">
+    <div>
+      <label for="filtro-num-sei">Número do SEI</label>
+      <input type="text" id="filtro-num-sei" placeholder="Digite o número do SEI" />
+    </div>
+    <div>
+      <label for="filtro-data-envio">Data de Envio</label>
+      <input type="date" id="filtro-data-envio" />
+    </div>
+    <div>
+      <label for="filtro-assunto">Assunto</label>
+      <input type="text" id="filtro-assunto" placeholder="Digite o assunto" />
+    </div>
+    <div>
+      <label for="filtro-solicitante">Solicitante</label>
+      <input type="text" id="filtro-solicitante" placeholder="Digite o solicitante" />
+    </div>
+    <div>
+      <label for="filtro-local">Local</label>
+      <input type="text" id="filtro-local" placeholder="Digite o local" />
+    </div>
+    <div>
+      <label for="filtro-ponto-focal">Ponto Focal</label>
+      <input type="text" id="filtro-ponto-focal" placeholder="Digite o ponto focal" />
+    </div>
+    <div>
+      <label for="filtro-data">Data</label>
+      <input type="date" id="filtro-data" />
+    </div>
+    <div>
+      <label for="filtro-situacao">Situação</label>
+      <select id="filtro-situacao">
+        <option value="">Todas</option>
+        <option value="Aberto">Aberto</option>
+        <option value="Em andamento">Em andamento</option>
+        <option value="Concluído">Concluído</option>
+        <option value="Cancelado">Cancelado</option>
+      </select>
+    </div>
+    <div>
+      <label for="filtro-sei-solicitacao">SEI de solicitação das diárias</label>
+      <input type="text" id="filtro-sei-solicitacao" placeholder="Digite o SEI da solicitação" />
+    </div>
+  </div>
+
+  <button id="filtrar-botao">Filtrar</button>
+
+  <ul id="lista-acoes"></ul>
+
+  <script>
+    // Dados exemplo de ações
+    const acoes = [
+      {
+        numSei: '12345-3900009117.000717/2025-75',
+        dataEnvio: '2025-04-03 00:00:00',
+        assunto: 'Solicita JPS',
+        solicitante: 'SESC (PROJETO COLMEIA)',
+        local: 'Sesc Araripina Local a Definir Central',
+        pontoFocal: 'Hamanda Emanuela 87 999590346 Santos',
+        data: '2024-06-22',
+        situacao: 'Aberto',
+        seiSolicitacao: '0000000' 
+      }, ]
+      
+    const listaAcoes = document.getElementById('lista-acoes');
+
+    const filtroNumSei = document.getElementById('filtro-num-sei');
+    const filtroDataEnvio = document.getElementById('filtro-data-envio');
+    const filtroAssunto = document.getElementById('filtro-assunto');
+    const filtroSolicitante = document.getElementById('filtro-solicitante');
+    const filtroLocal = document.getElementById('filtro-local');
+    const filtroPontoFocal = document.getElementById('filtro-ponto-focal');
+    const filtroData = document.getElementById('filtro-data');
+    const filtroSituacao = document.getElementById('filtro-situacao');
+    const filtroSeiSolicitacao = document.getElementById('filtro-sei-solicitacao');
+
+    function filtrarAcoes() {
+      const numSeiVal = filtroNumSei.value.trim().toLowerCase();
+      const dataEnvioVal = filtroDataEnvio.value;
+      const assuntoVal = filtroAssunto.value.trim().toLowerCase();
+      const solicitanteVal = filtroSolicitante.value.trim().toLowerCase();
+      const localVal = filtroLocal.value.trim().toLowerCase();
+      const pontoFocalVal = filtroPontoFocal.value.trim().toLowerCase();
+      const dataVal = filtroData.value;
+      const situacaoVal = filtroSituacao.value;
+      const seiSolicitacaoVal = filtroSeiSolicitacao.value.trim().toLowerCase();
+
+      const filtradas = acoes.filter(acao => {
+        const matchNumSei = numSeiVal === '' || acao.numSei.toLowerCase().includes(numSeiVal);
+        const matchDataEnvio = dataEnvioVal === '' || acao.dataEnvio === dataEnvioVal;
+        const matchAssunto = assuntoVal === '' || acao.assunto.toLowerCase().includes(assuntoVal);
+        const matchSolicitante = solicitanteVal === '' || acao.solicitante.toLowerCase().includes(solicitanteVal);
+        const matchLocal = localVal === '' || acao.local.toLowerCase().includes(localVal);
+        const matchPontoFocal = pontoFocalVal === '' || acao.pontoFocal.toLowerCase().includes(pontoFocalVal);
+        const matchData = dataVal === '' || acao.data === dataVal;
+        const matchSituacao = situacaoVal === '' || acao.situacao === situacaoVal;
+        const matchSeiSolicitacao = seiSolicitacaoVal === '' || (acao.seiSolicitacao && acao.seiSolicitacao.toLowerCase().includes(seiSolicitacaoVal));
+
+        return matchNumSei && matchDataEnvio && matchAssunto && matchSolicitante && matchLocal && matchPontoFocal && matchData && matchSituacao && matchSeiSolicitacao;
+      });
+
+      renderizarLista(filtradas);
+    }
+
+    function renderizarLista(lista) {
+      listaAcoes.innerHTML = '';
+
+      if (lista.length === 0) {
+        const li = document.createElement('li');
+        li.classList.add('sem-resultados');
+        li.textContent = 'Nenhuma ação encontrada.';
+        listaAcoes.appendChild(li);
+        return;
+      }
+
+      lista.forEach(acao => {
+        const li = document.createElement('li');
+
+        li.innerHTML = 
+          '<span>Número SEI:</span> ' + acao.numSei + '<br />' +
+          '<span>Data de envio:</span> ' + acao.dataEnvio + '<br />' +
+          '<span>Assunto:</span> ' + acao.assunto + '<br />' +
+          '<span>Solicitante:</span> ' + acao.solicitante + '<br />' +
+          '<span>Local:</span> ' + acao.local + '<br />' +
+          '<span>Ponto Focal:</span> ' + acao.pontoFocal + '<br />' +
+          '<span>Data:</span> ' + acao.data + '<br />' +
+          '<span>Situação:</span> ' + acao.situacao + '<br />' +
+          '<span>SEI Solicitação:</span> ' + (acao.seiSolicitacao || '-');
+
+        listaAcoes.appendChild(li);
+      });
+    }
+
+    // Adiciona evento ao botão de filtrar
+    document.getElementById('filtrar-botao').addEventListener('click', filtrarAcoes);
+
+    // Inicializa com todos os itens exibidos
+    filtrarAcoes();
+  </script>
+</body>
+</html>

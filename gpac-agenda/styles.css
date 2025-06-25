@@ -1,6 +1,6 @@
 /* Modern color palette and variables */
 :root {
-  --primary-color: #1a237e;    /* Deep Navy */
+  --primary-color: #003859;    /* Deep Navy */
   --text-color: #333333;       /* Dark Gray */
   --background: #f8f9fa;       /* Light Gray */
   --white: #ffffff;
@@ -110,6 +110,23 @@ input[type="email"]:focus {
 
 .btn-primary:hover {
   opacity: 0.9;
+}
+
+.btn-primary.add-event {
+    background-color: #007bff; /* Cor de fundo do botão */
+    color: white; /* Cor da fonte (texto) */
+    border: none; /* Remover borda padrão */
+    padding: 10px 20px; /* Espaçamento interno */
+    text-align: center; /* Centralizar texto */
+    text-decoration: none; /* Remover sublinhado */
+    display: inline-block; /* Permitir que o botão tenha espaçamento */
+    font-size: 16px; /* Tamanho da fonte */
+    border-radius: 5px; /* Bordas arredondadas */
+    cursor: pointer; /* Mudar o cursor ao passar o mouse */
+}
+
+.btn-primary.add-event:hover {
+    background-color: #0056b3; /* Cor de fundo ao passar o mouse */
 }
 
 /* Links */
