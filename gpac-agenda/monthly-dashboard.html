@@ -5,168 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GPAC Agenda - Dashboard Mensal</title>
   <link rel="stylesheet" href="styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <style>
-    body {
-      background-color: #f8f9fa;
-      padding: 0;
-      margin: 0;
-      min-height: 100vh;
-      display: block;
-    }
-
-    .header {
-      padding: 1rem;
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid #e5e7eb;
-      background: #fff;
-    }
-
-    .menu-button {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      color: #1a1a1a;
-      cursor: pointer;
-      padding: 0.5rem;
-    }
-
-    .logo {
-      margin: 0 auto;
-      height: 40px;
-    }
-
-    .calendar-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #1a1a1a;
-      margin: 1rem;
-    }
-
-    .current-month {
-      color: #666;
-      font-size: 0.875rem;
-      margin: 0 1rem;
-    }
-
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 0.5rem;
-      padding: 1rem;
-      background: #fff;
-      border-radius: 0.5rem;
-      margin: 1rem;
-    }
-
-    .calendar-header {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
-      padding: 0 1rem;
-    }
-
-    .calendar-header span {
-      text-align: center;
-      font-size: 0.75rem;
-      color: #666;
-      text-transform: lowercase;
-    }
-
-    .calendar-day {
-      aspect-ratio: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.875rem;
-      color: #1a1a1a;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .calendar-day.other-month {
-      color: #ccc;
-    }
-
-    .calendar-day.today {
-      background-color: #e6f3ff;
-      font-weight: 600;
-    }
-
-    .calendar-day:hover {
-      background-color: #f3f4f6;
-    }
-
-    .events-section {
-      margin: 1rem;
-      padding: 1rem;
-      background: #fff;
-      border-radius: 0.5rem;
-    }
-
-    .events-title {
-      font-size: 1.125rem;
-      font-weight: 600;
-      color: #1a1a1a;
-      margin-bottom: 1rem;
-    }
-
-    .events-date {
-      font-size: 0.875rem;
-      color: #666;
-      margin-bottom: 1rem;
-    }
-
-    .no-events {
-      text-align: center;
-      padding: 2rem;
-      color: #666;
-    }
-
-    .no-events i {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      color: #ccc;
-    }
-  </style>
 </head>
 <body>
-  <header class="header">
-    <button class="menu-button">
-      <i class="fas fa-bars"></i>
-    </button>
-    <img src="logo.png" alt="GPAC Agenda" class="logo">
-  </header>
-
-  <main>
-    <h1 class="calendar-title">Calendário Mensal</h1>
-    <p class="current-month">Junho De 2025</p>
-
-    <div class="calendar-header">
-      <span>seg</span>
-      <span>ter</span>
-      <span>qua</span>
-      <span>qui</span>
-      <span>sex</span>
-      <span>sab</span>
-      <span>dom</span>
-    </div>
-
-    <div class="calendar-grid" id="calendarGrid"></div>
-
-    <section class="events-section">
-      <h2 class="events-title">Eventos da Semana</h2>
-      <p class="events-date">16/06 - 22/06/2025</p>
-      <h3>Quinta-Feira, 19/06 <span>(Hoje)</span></h3>
-      <div class="no-events">
-        <i class="fas fa-calendar-xmark"></i>
-        <p>Nenhum evento encontrado para esta semana.</p>
+  <main class="container">
+    <div class="card">
+      <div class="monthly-header">
+        <h1 class="monthly-title">
+          <i class="fas fa-calendar-alt"></i> Dashboard Mensal
+        </h1>
+        
+        <div class="date-navigation">
+          <button class="btn-icon" id="prevMonth">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <span class="current-date">Junho 2025</span>
+          <button class="btn-icon" id="nextMonth">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
       </div>
-    </section>
+
+      <div class="calendar-container">
+        <div class="calendar-headers">
+          <div class="calendar-header">Dom</div>
+          <div class="calendar-header">Seg</div>
+          <div class="calendar-header">Ter</div>
+          <div class="calendar-header">Qua</div>
+          <div class="calendar-header">Qui</div>
+          <div class="calendar-header">Sex</div>
+          <div class="calendar-header">Sáb</div>
+        </div>
+        <div class="calendar-grid" id="calendarGrid">
+          <!-- Calendar days will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <div class="monthly-summary">
+        <h2 class="summary-title">Resumo do Mês</h2>
+        <div class="summary-stats">
+          <div class="stat-item">
+            <i class="fas fa-calendar-check"></i>
+            <span class="stat-value">12</span>
+            <span class="stat-label">Eventos</span>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-clock"></i>
+            <span class="stat-value">24h</span>
+            <span class="stat-label">Horas</span>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-users"></i>
+            <span class="stat-value">8</span>
+            <span class="stat-label">Reuniões</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
   <nav class="nav-bottom">
@@ -175,15 +71,11 @@
         <i class="fas fa-calendar-day"></i>
         <span>Diária</span>
       </a>
-      <a href="#" class="nav-item">
-        <i class="fas fa-search"></i>
-        <span>Busca</span>
-      </a>
       <a href="monthly-dashboard.html" class="nav-item active">
         <i class="fas fa-calendar-alt"></i>
         <span>Mensal</span>
       </a>
-      <a href="event-crud.html" class="nav-item">
+      <a href="action-form.html" class="nav-item">
         <i class="fas fa-plus"></i>
         <span>Adicionar</span>
       </a>

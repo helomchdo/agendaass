@@ -5,145 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GPAC Agenda - Agenda Diária</title>
   <link rel="stylesheet" href="styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <style>
-    body {
-      background-color: #f8f9fa;
-      padding: 0;
-      margin: 0;
-      min-height: 100vh;
-      display: block;
-    }
-
-    main {
-      padding-bottom: 80px;
-    }
-
-    .header {
-      padding: 1rem;
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid #e5e7eb;
-      background: #fff;
-    }
-
-    .menu-button {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      color: #1a1a1a;
-      cursor: pointer;
-      padding: 0.5rem;
-    }
-
-    .logo {
-      margin: 0 auto;
-      height: 32px;
-      width: auto;
-      display: block;
-      object-fit: contain;
-    }
-
-    .daily-header {
-      padding: 1rem;
-      background: #fff;
-      margin-bottom: 1rem;
-    }
-
-    .daily-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #1a1a1a;
-      margin: 0 0 0.5rem 0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .daily-title span {
-      color: #666;
-      font-size: 0.875rem;
-      font-weight: normal;
-    }
-
-    .date-navigation {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin: 1rem 0;
-    }
-
-    .nav-button {
-      background: none;
-      border: none;
-      font-size: 1.25rem;
-      color: #1a1a1a;
-      cursor: pointer;
-      padding: 0.5rem;
-    }
-
-    .current-date {
-      font-size: 1rem;
-      color: #666;
-    }
-
-    .no-events-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 4rem 1rem;
-      text-align: center;
-      color: #666;
-    }
-
-    .no-events-icon {
-      font-size: 4rem;
-      color: #ccc;
-      margin-bottom: 1rem;
-    }
-
-    .no-events-message {
-      font-size: 1.125rem;
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-    }
-
-    .no-events-submessage {
-      font-size: 0.875rem;
-      color: #666;
-    }
-  </style>
 </head>
 <body>
-  <header class="header">
-    <button class="menu-button">
-      <i class="fas fa-bars"></i>
-    </button>
-    <img src="logo.png" alt="GPAC Agenda" class="logo">
-  </header>
+  <main class="container">
+    <div class="card">
+      <div class="daily-header">
+        <h1 class="daily-title">
+          <i class="fas fa-calendar-day"></i> Agenda Diária
+          <span class="event-count">(0 eventos)</span>
+        </h1>
+        
+        <div class="date-navigation">
+          <button class="btn-icon" id="prevDay">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <span class="current-date">Sexta-Feira, 20 De Junho De 2025 (Hoje)</span>
+          <button class="btn-icon" id="nextDay">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
 
-  <main>
-    <div class="daily-header">
-      <h1 class="daily-title">
-        Agenda Diária <span>(0 eventos)</span>
-      </h1>
-      <div class="date-navigation">
-        <button class="nav-button" id="prevDay">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-        <span class="current-date">Sexta-Feira, 20 De Junho De 2025 (Hoje)</span>
-        <button class="nav-button" id="nextDay">
-          <i class="fas fa-chevron-right"></i>
+      <div class="no-events-container">
+        <i class="fas fa-calendar-check no-events-icon"></i>
+        <p class="no-events-message">Nenhum compromisso agendado</p>
+        <p class="no-events-submessage">Não há eventos para 20 de junho</p>
+        <button class="btn-primary add-event">
+          <i class="fas fa-plus"></i> Novo Evento
         </button>
       </div>
-    </div>
-
-    <div class="no-events-container">
-      <i class="fas fa-calendar no-events-icon"></i>
-      <p class="no-events-message">Nenhum compromisso agendado.</p>
-      <p class="no-events-submessage">Não há eventos para 20 de junho.</p>
     </div>
   </main>
   <script src="daily-agenda.js"></script>
