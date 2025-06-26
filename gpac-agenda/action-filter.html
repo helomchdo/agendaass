@@ -4,9 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Filtragem de Ações</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Inter', Arial, sans-serif;
       margin: 20px;
       background: #fafafa;
       color: #333;
@@ -14,7 +16,34 @@
 
     h1 {
       margin-bottom: 24px;
-      color: #004085;
+      color: #111827;
+      font-weight: 700;
+      font-size: 1.75rem;
+    }
+
+    .filter-methods {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 20px;
+    }
+
+    .filter-methods button {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 2px solid #e5e7eb;
+      background-color: white;
+      color: #374151;
+      font-weight: 600;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-methods button.active,
+    .filter-methods button:hover {
+      background-color: #2563eb;
+      border-color: #2563eb;
+      color: white;
     }
 
     .filtros {
@@ -33,7 +62,7 @@
       font-weight: 600;
       margin-bottom: 6px;
       font-size: 14px;
-      color: #666;
+      color: #4b5563;
     }
 
     input[type="text"],
@@ -42,7 +71,7 @@
       width: 100%;
       padding: 8px 10px;
       font-size: 14px;
-      border: 1px solid #ccc;
+      border: 1px solid #d1d5db;
       border-radius: 4px;
       box-sizing: border-box;
       transition: border-color 0.3s ease;
@@ -52,8 +81,8 @@
     input[type="date"]:focus,
     select:focus {
       outline: none;
-      border-color: #0056b3;
-      box-shadow: 0 0 5px #0056b3;
+      border-color: #2563eb;
+      box-shadow: 0 0 5px #2563eb;
     }
 
     #lista-acoes {
@@ -71,19 +100,19 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.06);
       line-height: 1.4;
       font-size: 15px;
-      color: #222;
+      color: #111827;
     }
 
     #lista-acoes li span {
       display: inline-block;
       min-width: 110px;
       font-weight: 600;
-      color: #004085;
+      color: #2563eb;
     }
 
     .sem-resultados {
       text-align: center;
-      color: #777;
+      color: #6b7280;
       font-style: italic;
       font-size: 16px;
       margin-top: 40px;
@@ -93,14 +122,15 @@
 <body>
   <h1>Filtro de Ações</h1>
 
-  <div class="filtros">
+  <div class="filter-methods">
+    <button id="filterByText" class="active">Filtrar por Texto</button>
+    <button id="filterByDate">Filtrar por Data</button>
+  </div>
+
+  <div class="filtros" id="textFilters">
     <div>
       <label for="filtro-num-sei">Número do SEI</label>
       <input type="text" id="filtro-num-sei" placeholder="Digite o número do SEI" />
-    </div>
-    <div>
-      <label for="filtro-data-envio">Data de Envio</label>
-      <input type="date" id="filtro-data-envio" />
     </div>
     <div>
       <label for="filtro-assunto">Assunto</label>
@@ -117,6 +147,13 @@
     <div>
       <label for="filtro-ponto-focal">Ponto Focal</label>
       <input type="text" id="filtro-ponto-focal" placeholder="Digite o ponto focal" />
+    </div>
+  </div>
+
+  <div class="filtros" id="dateFilters" style="display:none;">
+    <div>
+      <label for="filtro-data-envio">Data de Envio</label>
+      <input type="date" id="filtro-data-envio" />
     </div>
     <div>
       <label for="filtro-data">Data</label>
@@ -143,58 +180,25 @@
   <ul id="lista-acoes"></ul>
 
   <script>
-    // Dados exemplo de ações
-    const acoes = [
-      {
-        numSei: '12345-3900009117.000717/2025-75',
-        dataEnvio: '2025-04-03 00:00:00',
-        assunto: 'Solicita JPS',
-        solicitante: 'SESC (PROJETO COLMEIA)',
-        local: 'Sesc Araripina Local a Definir Central',
-        pontoFocal: 'Hamanda Emanuela 87 999590346 Santos',
-        data: '2024-06-22',
-        situacao: 'Aberto',
-        seiSolicitacao: '0000000' 
-      }, ]
-      
     const listaAcoes = document.getElementById('lista-acoes');
 
-    const filtroNumSei = document.getElementById('filtro-num-sei');
-    const filtroDataEnvio = document.getElementById('filtro-data-envio');
-    const filtroAssunto = document.getElementById('filtro-assunto');
-    const filtroSolicitante = document.getElementById('filtro-solicitante');
-    const filtroLocal = document.getElementById('filtro-local');
-    const filtroPontoFocal = document.getElementById('filtro-ponto-focal');
-    const filtroData = document.getElementById('filtro-data');
-    const filtroSituacao = document.getElementById('filtro-situacao');
-    const filtroSeiSolicitacao = document.getElementById('filtro-sei-solicitacao');
+    const filterByTextBtn = document.getElementById('filterByText');
+    const filterByDateBtn = document.getElementById('filterByDate');
 
-    function filtrarAcoes() {
-      const numSeiVal = filtroNumSei.value.trim().toLowerCase();
-      const dataEnvioVal = filtroDataEnvio.value;
-      const assuntoVal = filtroAssunto.value.trim().toLowerCase();
-      const solicitanteVal = filtroSolicitante.value.trim().toLowerCase();
-      const localVal = filtroLocal.value.trim().toLowerCase();
-      const pontoFocalVal = filtroPontoFocal.value.trim().toLowerCase();
-      const dataVal = filtroData.value;
-      const situacaoVal = filtroSituacao.value;
-      const seiSolicitacaoVal = filtroSeiSolicitacao.value.trim().toLowerCase();
+    const textFilters = document.getElementById('textFilters');
+    const dateFilters = document.getElementById('dateFilters');
 
-      const filtradas = acoes.filter(acao => {
-        const matchNumSei = numSeiVal === '' || acao.numSei.toLowerCase().includes(numSeiVal);
-        const matchDataEnvio = dataEnvioVal === '' || acao.dataEnvio === dataEnvioVal;
-        const matchAssunto = assuntoVal === '' || acao.assunto.toLowerCase().includes(assuntoVal);
-        const matchSolicitante = solicitanteVal === '' || acao.solicitante.toLowerCase().includes(solicitanteVal);
-        const matchLocal = localVal === '' || acao.local.toLowerCase().includes(localVal);
-        const matchPontoFocal = pontoFocalVal === '' || acao.pontoFocal.toLowerCase().includes(pontoFocalVal);
-        const matchData = dataVal === '' || acao.data === dataVal;
-        const matchSituacao = situacaoVal === '' || acao.situacao === situacaoVal;
-        const matchSeiSolicitacao = seiSolicitacaoVal === '' || (acao.seiSolicitacao && acao.seiSolicitacao.toLowerCase().includes(seiSolicitacaoVal));
-
-        return matchNumSei && matchDataEnvio && matchAssunto && matchSolicitante && matchLocal && matchPontoFocal && matchData && matchSituacao && matchSeiSolicitacao;
-      });
-
-      renderizarLista(filtradas);
+    async function fetchAcoes() {
+      try {
+        const response = await fetch('/api/actions');
+        if (!response.ok) throw new Error('Failed to fetch actions');
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        alert('Erro ao carregar ações.');
+        console.error(error);
+        return [];
+      }
     }
 
     function renderizarLista(lista) {
@@ -226,11 +230,70 @@
       });
     }
 
-    // Adiciona evento ao botão de filtrar
-    document.getElementById('filtrar-botao').addEventListener('click', filtrarAcoes);
+    function filtrarAcoes(acoes) {
+      let filtradas = [];
 
-    // Inicializa com todos os itens exibidos
-    filtrarAcoes();
+      if (textFilters.style.display !== 'none') {
+        const numSeiVal = document.getElementById('filtro-num-sei').value.trim().toLowerCase();
+        const assuntoVal = document.getElementById('filtro-assunto').value.trim().toLowerCase();
+        const solicitanteVal = document.getElementById('filtro-solicitante').value.trim().toLowerCase();
+        const localVal = document.getElementById('filtro-local').value.trim().toLowerCase();
+        const pontoFocalVal = document.getElementById('filtro-ponto-focal').value.trim().toLowerCase();
+
+        filtradas = acoes.filter(acao => {
+          return (
+            (numSeiVal === '' || acao.numSei.toLowerCase().includes(numSeiVal)) &&
+            (assuntoVal === '' || acao.assunto.toLowerCase().includes(assuntoVal)) &&
+            (solicitanteVal === '' || acao.solicitante.toLowerCase().includes(solicitanteVal)) &&
+            (localVal === '' || acao.local.toLowerCase().includes(localVal)) &&
+            (pontoFocalVal === '' || acao.pontoFocal.toLowerCase().includes(pontoFocalVal))
+          );
+        });
+      } else {
+        const dataEnvioVal = document.getElementById('filtro-data-envio').value;
+        const dataVal = document.getElementById('filtro-data').value;
+        const situacaoVal = document.getElementById('filtro-situacao').value;
+        const seiSolicitacaoVal = document.getElementById('filtro-sei-solicitacao').value.trim().toLowerCase();
+
+        filtradas = acoes.filter(acao => {
+          return (
+            (dataEnvioVal === '' || acao.dataEnvio === dataEnvioVal) &&
+            (dataVal === '' || acao.data === dataVal) &&
+            (situacaoVal === '' || acao.situacao === situacaoVal) &&
+            (seiSolicitacaoVal === '' || (acao.seiSolicitacao && acao.seiSolicitacao.toLowerCase().includes(seiSolicitacaoVal)))
+          );
+        });
+      }
+
+      renderizarLista(filtradas);
+    }
+
+    let acoes = [];
+
+    filterByTextBtn.addEventListener('click', () => {
+      filterByTextBtn.classList.add('active');
+      filterByDateBtn.classList.remove('active');
+      textFilters.style.display = 'grid';
+      dateFilters.style.display = 'none';
+      filtrarAcoes(acoes);
+    });
+
+    filterByDateBtn.addEventListener('click', () => {
+      filterByDateBtn.classList.add('active');
+      filterByTextBtn.classList.remove('active');
+      dateFilters.style.display = 'grid';
+      textFilters.style.display = 'none';
+      filtrarAcoes(acoes);
+    });
+
+    document.getElementById('filtrar-botao').addEventListener('click', () => filtrarAcoes(acoes));
+
+    async function init() {
+      acoes = await fetchAcoes();
+      filtrarAcoes(acoes);
+    }
+
+    init();
   </script>
 </body>
 </html>
