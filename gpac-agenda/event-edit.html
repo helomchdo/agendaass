@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GPAC Agenda - Editar Ação</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+  <header class="header">
+    <h1>Editar Ação</h1>
+  </header>
+  <main class="container">
+    <div class="card">
+      <form id="editActionForm">
+        <label for="seiNumber">Número do SEI</label>
+        <input type="text" id="seiNumber" name="seiNumber" placeholder="Número do SEI" required />
+
+        <label for="sendDate">Data de envio</label>
+        <input type="date" id="sendDate" name="sendDate" required />
+
+        <label for="subject">Assunto</label>
+        <input type="text" id="subject" name="subject" placeholder="Assunto" required />
+
+        <label for="requester">Solicitante</label>
+        <input type="text" id="requester" name="requester" placeholder="Solicitante" required />
+
+        <label for="location">Local</label>
+        <input type="text" id="location" name="location" placeholder="Local" required />
+
+        <label for="focalPoint">Ponto focal</label>
+        <input type="text" id="focalPoint" name="focalPoint" placeholder="Ponto focal" required />
+
+        <label for="date">Data</label>
+        <input type="date" id="date" name="date" required />
+
+        <label for="status">Situação</label>
+        <select id="status" name="status" required>
+          <option value="">Selecionar</option>
+          <option value="SOLICITADO">SOLICITADO</option>
+          <option value="ARTICULADO">ARTICULADO</option>
+          <option value="REALIZADA">REALIZADA</option>
+          <option value="CANCELADO_PELO_SOLICITANTE">CANCELADO PELO SOLICITANTE</option>
+          <option value="ATENDIDO">ATENDIDO</option>
+        </select>
+
+        <label for="seiRequest">SEI de solicitação das diárias</label>
+        <input type="text" id="seiRequest" name="seiRequest" placeholder="SEI de solicitação das diárias" />
+
+        <div class="form-buttons">
+          <button type="submit" class="btn-primary">Salvar</button>
+          <button type="button" id="deleteBtn" class="btn-danger">Excluir</button>
+          <button type="button" id="cancelBtn" class="btn-secondary">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </main>
+  <script type="module" src="event-edit.js"></script>
+</body>
+</html>
