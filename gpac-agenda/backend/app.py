@@ -67,16 +67,21 @@ def create_event():
         return jsonify({'error': 'No data provided'}), 400
 
     event_data = {
-        'title': data.get('title'),
-        'date_time': data.get('dateTime'),
+        'sei_number': data.get('seiNumber'),
+        'send_date': data.get('sendDate'),
+        'subject': data.get('subject'),
+        'requester': data.get('requester'),
         'location': data.get('location'),
-        'description': data.get('description', ''),
-        'participants': data.get('participants', ''),
-        'reminders': data.get('reminders', ''),
+        'focal_point': data.get('focalPoint'),
+        'date': data.get('date'),
+        'status': data.get('status'),
+        'sei_request': data.get('seiRequest', ''),
         'user_id': data.get('user_id')  # This should come from the token in production
     }
 
-    if not event_data['title'] or not event_data['date_time'] or not event_data['location']:
+    if not all([event_data['sei_number'], event_data['send_date'], event_data['subject'],
+                event_data['requester'], event_data['location'], event_data['focal_point'],
+                event_data['date'], event_data['status']]):
         return jsonify({'error': 'Missing required fields'}), 400
 
     response = supabase_request('POST', 'events', data=event_data, token=token)
@@ -96,15 +101,20 @@ def update_event(event_id):
         return jsonify({'error': 'No data provided'}), 400
 
     event_data = {
-        'title': data.get('title'),
-        'date_time': data.get('dateTime'),
+        'sei_number': data.get('seiNumber'),
+        'send_date': data.get('sendDate'),
+        'subject': data.get('subject'),
+        'requester': data.get('requester'),
         'location': data.get('location'),
-        'description': data.get('description', ''),
-        'participants': data.get('participants', ''),
-        'reminders': data.get('reminders', '')
+        'focal_point': data.get('focalPoint'),
+        'date': data.get('date'),
+        'status': data.get('status'),
+        'sei_request': data.get('seiRequest', '')
     }
 
-    if not event_data['title'] or not event_data['date_time'] or not event_data['location']:
+    if not all([event_data['sei_number'], event_data['send_date'], event_data['subject'],
+                event_data['requester'], event_data['location'], event_data['focal_point'],
+                event_data['date'], event_data['status']]):
         return jsonify({'error': 'Missing required fields'}), 400
 
     response = supabase_request(

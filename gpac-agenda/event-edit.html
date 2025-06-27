@@ -4,55 +4,182 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GPAC Agenda - Editar Ação</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-  <header class="header">
-    <h1>Editar Ação</h1>
+<body class="bg-gray-50">
+  <div id="loader" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
+
+  <div id="toast" class="fixed top-4 right-4 z-50 hidden">
+    <div class="bg-white shadow-lg rounded-lg p-4 flex items-center space-x-3">
+      <i id="toastIcon" class="fas"></i>
+      <p id="toastMessage" class="text-gray-800"></p>
+    </div>
+  </div>
+
+  <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-6 max-w-sm mx-4">
+      <h3 class="text-lg font-semibold mb-4">Confirmar Exclusão</h3>
+      <p class="text-gray-600 mb-6">Tem certeza que deseja excluir esta ação? Esta operação não pode ser desfeita.</p>
+      <div class="flex justify-end space-x-3">
+        <button id="cancelDelete" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors">
+          Cancelar
+        </button>
+        <button id="confirmDelete" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+          Excluir
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <header class="bg-white shadow-sm">
+    <div class="max-w-4xl mx-auto px-4 py-6">
+      <h1 class="text-2xl font-semibold text-gray-900">Editar Ação</h1>
+    </div>
   </header>
-  <main class="container">
-    <div class="card">
-      <form id="editActionForm">
-        <label for="seiNumber">Número do SEI</label>
-        <input type="text" id="seiNumber" name="seiNumber" placeholder="Número do SEI" required />
 
-        <label for="sendDate">Data de envio</label>
-        <input type="date" id="sendDate" name="sendDate" required />
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <div class="bg-white shadow rounded-lg p-6">
+      <form id="editActionForm" class="space-y-6">
+        <p class="text-sm text-gray-500 mb-4">
+          Campos marcados com <span class="text-red-500">*</span> são obrigatórios
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="seiNumber" class="block text-sm font-medium text-gray-700">
+              Número do SEI <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="seiNumber" name="seiNumber" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              aria-label="Número do SEI"
+              aria-required="true" />
+            <p class="mt-1 text-sm text-red-500 hidden" id="seiNumber-error">
+              Este campo é obrigatório
+            </p>
+          </div>
 
-        <label for="subject">Assunto</label>
-        <input type="text" id="subject" name="subject" placeholder="Assunto" required />
+          <div>
+            <label for="sendDate" class="block text-sm font-medium text-gray-700">
+              Data de envio <span class="text-red-500">*</span>
+            </label>
+            <input type="date" id="sendDate" name="sendDate" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              aria-label="Data de envio"
+              aria-required="true" />
+            <p class="mt-1 text-sm text-red-500 hidden" id="sendDate-error">
+              Este campo é obrigatório
+            </p>
+          </div>
 
-        <label for="requester">Solicitante</label>
-        <input type="text" id="requester" name="requester" placeholder="Solicitante" required />
+          <div class="md:col-span-2">
+            <label for="subject" class="block text-sm font-medium text-gray-700">
+              Assunto <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="subject" name="subject" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              aria-label="Assunto"
+              aria-required="true" />
+            <p class="mt-1 text-sm text-red-500 hidden" id="subject-error">
+              Este campo é obrigatório
+            </p>
+          </div>
 
-        <label for="location">Local</label>
-        <input type="text" id="location" name="location" placeholder="Local" required />
+          <div>
+            <label for="requester" class="block text-sm font-medium text-gray-700">
+              Solicitante <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="requester" name="requester" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              aria-label="Solicitante"
+              aria-required="true" />
+            <p class="mt-1 text-sm text-red-500 hidden" id="requester-error">
+              Este campo é obrigatório
+            </p>
+          </div>
 
-        <label for="focalPoint">Ponto focal</label>
-        <input type="text" id="focalPoint" name="focalPoint" placeholder="Ponto focal" required />
+          <div>
+            <label for="location" class="block text-sm font-medium text-gray-700">
+              Local <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="location" name="location" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              aria-label="Local"
+              aria-required="true" />
+            <p class="mt-1 text-sm text-red-500 hidden" id="location-error">
+              Este campo é obrigatório
+            </p>
+          </div>
 
-        <label for="date">Data</label>
-        <input type="date" id="date" name="date" required />
+          <div>
+            <label for="focalPoint" class="block text-sm font-medium text-gray-700">
+              Ponto focal <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="focalPoint" name="focalPoint" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              aria-label="Ponto focal"
+              aria-required="true" />
+            <p class="mt-1 text-sm text-red-500 hidden" id="focalPoint-error">
+              Este campo é obrigatório
+            </p>
+          </div>
 
-        <label for="status">Situação</label>
-        <select id="status" name="status" required>
-          <option value="">Selecionar</option>
-          <option value="SOLICITADO">SOLICITADO</option>
-          <option value="ARTICULADO">ARTICULADO</option>
-          <option value="REALIZADA">REALIZADA</option>
-          <option value="CANCELADO_PELO_SOLICITANTE">CANCELADO PELO SOLICITANTE</option>
-          <option value="ATENDIDO">ATENDIDO</option>
-        </select>
+          <div>
+            <label for="date" class="block text-sm font-medium text-gray-700">
+              Data <span class="text-red-500">*</span>
+            </label>
+            <input type="date" id="date" name="date" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              aria-label="Data"
+              aria-required="true" />
+            <p class="mt-1 text-sm text-red-500 hidden" id="date-error">
+              Este campo é obrigatório
+            </p>
+          </div>
 
-        <label for="seiRequest">SEI de solicitação das diárias</label>
-        <input type="text" id="seiRequest" name="seiRequest" placeholder="SEI de solicitação das diárias" />
+          <div>
+            <label for="status" class="block text-sm font-medium text-gray-700">
+              Situação <span class="text-red-500">*</span>
+            </label>
+            <select id="status" name="status" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              aria-label="Situação"
+              aria-required="true">
+              <option value="">Selecionar</option>
+              <option value="SOLICITADO">SOLICITADO</option>
+              <option value="ARTICULADO">ARTICULADO</option>
+              <option value="REALIZADA">REALIZADA</option>
+              <option value="CANCELADO_PELO_SOLICITANTE">CANCELADO PELO SOLICITANTE</option>
+              <option value="ATENDIDO">ATENDIDO</option>
+            </select>
+            <p class="mt-1 text-sm text-red-500 hidden" id="status-error">
+              Este campo é obrigatório
+            </p>
+          </div>
 
-        <div class="form-buttons">
-          <button type="submit" class="btn-primary">Salvar</button>
-          <button type="button" id="deleteBtn" class="btn-danger">Excluir</button>
-          <button type="button" id="cancelBtn" class="btn-secondary">Cancelar</button>
+          <div class="md:col-span-2">
+            <label for="seiRequest" class="block text-sm font-medium text-gray-700">SEI de solicitação das diárias</label>
+            <input type="text" id="seiRequest" name="seiRequest"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-6">
+          <button type="button" id="cancelBtn"
+            class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors">
+            Cancelar
+          </button>
+          <button type="button" id="deleteBtn"
+            class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+            Excluir
+          </button>
+          <button type="submit"
+            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+            Salvar
+          </button>
         </div>
       </form>
     </div>
