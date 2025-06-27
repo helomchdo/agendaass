@@ -3,181 +3,129 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Filtragem de Ações</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+  <title>GPAC Agenda - Filtrar Ações</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <style>
-    body {
-      font-family: 'Inter', Arial, sans-serif;
-      margin: 20px;
-      background: #fafafa;
-      color: #333;
-    }
-
-    h1 {
-      margin-bottom: 24px;
-      color: #111827;
-      font-weight: 700;
-      font-size: 1.75rem;
-    }
-
-    .filter-methods {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 20px;
-    }
-
-    .filter-methods button {
-      flex: 1;
-      padding: 0.75rem 1rem;
-      border: 2px solid #e5e7eb;
-      background-color: white;
-      color: #374151;
-      font-weight: 600;
-      border-radius: 0.375rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .filter-methods button.active,
-    .filter-methods button:hover {
-      background-color: #2563eb;
-      border-color: #2563eb;
-      color: white;
-    }
-
-    .filtros {
-      background: #fff;
-      padding: 20px;
-      border-radius: 6px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.05);
-      margin-bottom: 30px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill,minmax(240px, 1fr));
-      gap: 15px;
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
-      font-size: 14px;
-      color: #4b5563;
-    }
-
-    input[type="text"],
-    input[type="date"],
-    select {
-      width: 100%;
-      padding: 8px 10px;
-      font-size: 14px;
-      border: 1px solid #d1d5db;
-      border-radius: 4px;
-      box-sizing: border-box;
-      transition: border-color 0.3s ease;
-    }
-
-    input[type="text"]:focus,
-    input[type="date"]:focus,
-    select:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 5px #2563eb;
-    }
-
-    #lista-acoes {
-      list-style-type: none;
-      padding-left: 0;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    #lista-acoes li {
-      background: #fff;
-      margin-bottom: 14px;
-      padding: 16px 20px;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-      line-height: 1.4;
-      font-size: 15px;
-      color: #111827;
-    }
-
-    #lista-acoes li span {
-      display: inline-block;
-      min-width: 110px;
-      font-weight: 600;
-      color: #2563eb;
-    }
-
-    .sem-resultados {
-      text-align: center;
-      color: #6b7280;
-      font-style: italic;
-      font-size: 16px;
-      margin-top: 40px;
-    }
+  <link rel="stylesheet" href="styles.css" />
   </style>
 </head>
-<body>
-  <h1>Filtro de Ações</h1>
-
-  <div class="filter-methods">
-    <button id="filterByText" class="active">Filtrar por Texto</button>
-    <button id="filterByDate">Filtrar por Data</button>
+<body class="bg-gray-50">
+  <!-- Loading Spinner -->
+  <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
   </div>
+  <!-- Navbar -->
+  <nav class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-between h-16">
+        <div class="flex">
+          <div class="flex-shrink-0 flex items-center">
+            <img class="h-8 w-auto" src="logo.png" alt="GPAC Logo" />
+          </div>
+          <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <a href="daily-agenda.html" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+              Agenda Diária
+            </a>
+            <a href="monthly-dashboard.html" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+              Dashboard Mensal
+            </a>
+            <a href="action-filter.html" class="text-blue-500 border-b-2 border-blue-500 px-3 py-2 text-sm font-medium" aria-current="page">
+              Filtrar Ações
+            </a>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <a href="user-profile.html" class="text-gray-500 hover:text-gray-700 px-3 py-2">
+            <i class="fas fa-user"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
 
-  <div class="filtros" id="textFilters">
-    <div>
-      <label for="filtro-num-sei">Número do SEI</label>
-      <input type="text" id="filtro-num-sei" placeholder="Digite o número do SEI" />
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <div class="md:flex md:items-center md:justify-between mb-6">
+      <h1 class="text-2xl font-semibold text-gray-900">Filtrar Ações</h1>
     </div>
-    <div>
-      <label for="filtro-assunto">Assunto</label>
-      <input type="text" id="filtro-assunto" placeholder="Digite o assunto" />
+
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+      <div class="flex gap-4 mb-6">
+        <button id="filterByText" class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-md font-medium hover:bg-blue-600 transition-colors">
+          Filtrar por Texto
+        </button>
+        <button id="filterByDate" class="flex-1 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors">
+          Filtrar por Data
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="textFilters">
+        <div>
+          <label for="filtro-num-sei" class="block text-sm font-medium text-gray-700 mb-1">Número do SEI</label>
+          <input type="text" id="filtro-num-sei" placeholder="Digite o número do SEI"
+            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label for="filtro-assunto" class="block text-sm font-medium text-gray-700 mb-1">Assunto</label>
+          <input type="text" id="filtro-assunto" placeholder="Digite o assunto"
+            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label for="filtro-solicitante" class="block text-sm font-medium text-gray-700 mb-1">Solicitante</label>
+          <input type="text" id="filtro-solicitante" placeholder="Digite o solicitante"
+            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label for="filtro-local" class="block text-sm font-medium text-gray-700 mb-1">Local</label>
+          <input type="text" id="filtro-local" placeholder="Digite o local"
+            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label for="filtro-ponto-focal" class="block text-sm font-medium text-gray-700 mb-1">Ponto Focal</label>
+          <input type="text" id="filtro-ponto-focal" placeholder="Digite o ponto focal"
+            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden" id="dateFilters">
+        <div>
+          <label for="filtro-data-envio" class="block text-sm font-medium text-gray-700 mb-1">Data de Envio</label>
+          <input type="date" id="filtro-data-envio"
+            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label for="filtro-data" class="block text-sm font-medium text-gray-700 mb-1">Data</label>
+          <input type="date" id="filtro-data"
+            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label for="filtro-situacao" class="block text-sm font-medium text-gray-700 mb-1">Situação</label>
+          <select id="filtro-situacao"
+            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+            <option value="">Todas</option>
+            <option value="SOLICITADO">SOLICITADO</option>
+            <option value="ARTICULADO">ARTICULADO</option>
+            <option value="REALIZADA">REALIZADA</option>
+            <option value="CANCELADO_PELO_SOLICITANTE">CANCELADO PELO SOLICITANTE</option>
+            <option value="ATENDIDO">ATENDIDO</option>
+          </select>
+        </div>
+        <div>
+          <label for="filtro-sei-solicitacao" class="block text-sm font-medium text-gray-700 mb-1">SEI de solicitação das diárias</label>
+          <input type="text" id="filtro-sei-solicitacao" placeholder="Digite o SEI da solicitação"
+            class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <button id="filtrar-botao" class="w-full sm:w-auto px-6 py-3 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 transition-colors">
+          Filtrar
+        </button>
+      </div>
     </div>
-    <div>
-      <label for="filtro-solicitante">Solicitante</label>
-      <input type="text" id="filtro-solicitante" placeholder="Digite o solicitante" />
-    </div>
-    <div>
-      <label for="filtro-local">Local</label>
-      <input type="text" id="filtro-local" placeholder="Digite o local" />
-    </div>
-    <div>
-      <label for="filtro-ponto-focal">Ponto Focal</label>
-      <input type="text" id="filtro-ponto-focal" placeholder="Digite o ponto focal" />
-    </div>
+
+    <ul id="lista-acoes" class="space-y-4"></ul>
   </div>
-
-  <div class="filtros" id="dateFilters" style="display:none;">
-    <div>
-      <label for="filtro-data-envio">Data de Envio</label>
-      <input type="date" id="filtro-data-envio" />
-    </div>
-    <div>
-      <label for="filtro-data">Data</label>
-      <input type="date" id="filtro-data" />
-    </div>
-    <div>
-      <label for="filtro-situacao">Situação</label>
-      <select id="filtro-situacao">
-        <option value="">Todas</option>
-        <option value="Aberto">Aberto</option>
-        <option value="Em andamento">Em andamento</option>
-        <option value="Concluído">Concluído</option>
-        <option value="Cancelado">Cancelado</option>
-      </select>
-    </div>
-    <div>
-      <label for="filtro-sei-solicitacao">SEI de solicitação das diárias</label>
-      <input type="text" id="filtro-sei-solicitacao" placeholder="Digite o SEI da solicitação" />
-    </div>
-  </div>
-
-  <button id="filtrar-botao">Filtrar</button>
-
-  <ul id="lista-acoes"></ul>
 
   <script>
     const listaAcoes = document.getElementById('lista-acoes');
@@ -188,16 +136,25 @@
     const textFilters = document.getElementById('textFilters');
     const dateFilters = document.getElementById('dateFilters');
 
+    const loading = document.getElementById('loading');
+    
     async function fetchAcoes() {
       try {
+        loading.classList.remove('hidden');
         const response = await fetch('/api/actions');
         if (!response.ok) throw new Error('Failed to fetch actions');
         const data = await response.json();
         return data;
       } catch (error) {
-        alert('Erro ao carregar ações.');
+        const errorMsg = 'Erro ao carregar ações. Por favor, tente novamente.';
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4';
+        errorDiv.innerHTML = `<span class="block sm:inline">${errorMsg}</span>`;
+        document.querySelector('.max-w-7xl').insertBefore(errorDiv, document.querySelector('.bg-white.shadow'));
         console.error(error);
         return [];
+      } finally {
+        loading.classList.add('hidden');
       }
     }
 
@@ -206,7 +163,7 @@
 
       if (lista.length === 0) {
         const li = document.createElement('li');
-        li.classList.add('sem-resultados');
+        li.className = 'bg-white shadow rounded-lg p-6 text-center text-gray-500 italic';
         li.textContent = 'Nenhuma ação encontrada.';
         listaAcoes.appendChild(li);
         return;
@@ -214,18 +171,30 @@
 
       lista.forEach(acao => {
         const li = document.createElement('li');
+        li.className = 'bg-white shadow rounded-lg p-6';
 
-        li.innerHTML = 
-          '<span>Número SEI:</span> ' + acao.numSei + '<br />' +
-          '<span>Data de envio:</span> ' + acao.dataEnvio + '<br />' +
-          '<span>Assunto:</span> ' + acao.assunto + '<br />' +
-          '<span>Solicitante:</span> ' + acao.solicitante + '<br />' +
-          '<span>Local:</span> ' + acao.local + '<br />' +
-          '<span>Ponto Focal:</span> ' + acao.pontoFocal + '<br />' +
-          '<span>Data:</span> ' + acao.data + '<br />' +
-          '<span>Situação:</span> ' + acao.situacao + '<br />' +
-          '<span>SEI Solicitação:</span> ' + (acao.seiSolicitacao || '-');
+        const grid = document.createElement('div');
+        grid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
 
+        const fields = [
+          { label: 'Número SEI', value: acao.numSei },
+          { label: 'Data de envio', value: acao.dataEnvio },
+          { label: 'Assunto', value: acao.assunto },
+          { label: 'Solicitante', value: acao.solicitante },
+          { label: 'Local', value: acao.local },
+          { label: 'Ponto Focal', value: acao.pontoFocal },
+          { label: 'Data', value: acao.data },
+          { label: 'Situação', value: acao.situacao },
+          { label: 'SEI Solicitação', value: acao.seiSolicitacao || '-' }
+        ];
+
+        fields.forEach(field => {
+          const div = document.createElement('div');
+          div.innerHTML = `<span class="font-semibold text-blue-600">${field.label}:</span> ${field.value}`;
+          grid.appendChild(div);
+        });
+
+        li.appendChild(grid);
         listaAcoes.appendChild(li);
       });
     }
@@ -271,22 +240,32 @@
     let acoes = [];
 
     filterByTextBtn.addEventListener('click', () => {
-      filterByTextBtn.classList.add('active');
-      filterByDateBtn.classList.remove('active');
-      textFilters.style.display = 'grid';
-      dateFilters.style.display = 'none';
+      filterByTextBtn.classList.add('bg-blue-500', 'text-white');
+      filterByTextBtn.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
+      filterByDateBtn.classList.remove('bg-blue-500', 'text-white');
+      filterByDateBtn.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+      textFilters.classList.remove('hidden');
+      dateFilters.classList.add('hidden');
       filtrarAcoes(acoes);
     });
 
     filterByDateBtn.addEventListener('click', () => {
-      filterByDateBtn.classList.add('active');
-      filterByTextBtn.classList.remove('active');
-      dateFilters.style.display = 'grid';
-      textFilters.style.display = 'none';
+      filterByDateBtn.classList.add('bg-blue-500', 'text-white');
+      filterByDateBtn.classList.remove('bg-white', 'text-gray-700', 'border-gray-300');
+      filterByTextBtn.classList.remove('bg-blue-500', 'text-white');
+      filterByTextBtn.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+      dateFilters.classList.remove('hidden');
+      textFilters.classList.add('hidden');
       filtrarAcoes(acoes);
     });
 
-    document.getElementById('filtrar-botao').addEventListener('click', () => filtrarAcoes(acoes));
+    document.getElementById('filtrar-botao').addEventListener('click', () => {
+      loading.classList.remove('hidden');
+      setTimeout(() => {
+        filtrarAcoes(acoes);
+        loading.classList.add('hidden');
+      }, 300); // Small delay to show loading state
+    });
 
     async function init() {
       acoes = await fetchAcoes();
