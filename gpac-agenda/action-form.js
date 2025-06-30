@@ -1,3 +1,5 @@
+import { eventAPI } from './services/api.js';
+
 document.addEventListener("DOMContentLoaded", () => {
   const actionForm = document.getElementById("actionForm");
 
@@ -19,8 +21,26 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // TODO: Implement form submission logic
-    alert("Formulário enviado com sucesso!");
+    const eventData = {
+      seiNumber,
+      sendDate,
+      subject,
+      requester,
+      location,
+      focalPoint,
+      date,
+      status,
+      seiRequest
+    };
+
+    eventAPI.createEvent(eventData)
+      .then(() => {
+        alert("Formulário enviado com sucesso!");
+        actionForm.reset();
+      })
+      .catch((error) => {
+        alert("Erro ao enviar formulário: " + error.message);
+      });
   });
 
   actionForm.addEventListener("reset", () => {
