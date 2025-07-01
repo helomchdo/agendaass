@@ -1,11 +1,12 @@
-// API base URL - change this to match your backend URL
-const API_BASE_URL = 'http://localhost:5000/api';
+// API base URL - automatically detect environment
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+    ? 'https://your-production-url.com/api'  // Update this with your production URL
+    : 'http://localhost:5000/api';
 
 // Get the auth token from Supabase
 const getAuthToken = () => {
-    // You can implement getting the token from your Supabase auth state here
-    // For example, if you're storing it in localStorage or in a state management system
-    return localStorage.getItem('supabase.auth.token');
+    const session = JSON.parse(localStorage.getItem('supabase.auth.token'));
+    return session?.access_token;
 };
 
 // Helper function to make API requests

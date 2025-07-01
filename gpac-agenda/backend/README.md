@@ -1,21 +1,21 @@
 # GPAC Agenda Backend
 
-This is the backend service for the GPAC Agenda application, built with Flask and SQLAlchemy.
+## Overview
+Backend service for GPAC Agenda application, built with Flask and Supabase.
 
-## Features
+## Prerequisites
+- Python 3.8+
+- Node.js 14+
+- Supabase account and project
 
-- User authentication (register, login)
-- JWT-based authorization
-- Event management (CRUD operations)
-- SQLite database (configurable to use other databases)
-- Environment variable configuration
+## Environment Setup
 
-## Setup Instructions
-
-1. Create a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+1. Create a `.env` file in the root directory:
+```env
+SUPABASE_URL=your_supabase_url
+SUPABASE_KEY=your_supabase_key
+FLASK_ENV=production
+FLASK_APP=app.py
 ```
 
 2. Install dependencies:
@@ -23,69 +23,110 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-3. Configure environment variables:
-- Copy `.env.example` to `.env`
-- Update the variables in `.env` as needed
-- Make sure to change the JWT_SECRET_KEY in production
+## Development
 
-4. Initialize the database:
+Run the development server:
 ```bash
-flask db init
-flask db migrate
-flask db upgrade
+flask run
 ```
 
-5. Run the development server:
-```bash
-python app.py
+## Deployment on Render
+
+### Prerequisites
+
+1. Create a [Render](https://render.com) account
+2. Fork or upload this repository to your GitHub account
+
+### Deployment Steps
+
+1. In Render Dashboard:
+   - Click "New +"
+   - Select "Web Service"
+   - Connect your GitHub repository
+   - Select the backend directory as your root directory
+
+2. Configure the Service:
+   - Name: `gpac-agenda-api` (or your preferred name)
+   - Environment: `Python 3`
+   - Build Command: `pip install -r requirements.txt`
+   - Start Command: `gunicorn app:app --bind 0.0.0.0:$PORT`
+   - Select the appropriate instance type
+
+3. Add Environment Variables:
+   ```
+   FLASK_ENV=production
+   SUPABASE_URL=your_supabase_url
+   SUPABASE_KEY=your_supabase_key
+   ```
+
+4. Deploy:
+   - Click "Create Web Service"
+   - Render will automatically deploy your application
+   - Monitor the deployment logs for any issues
+
+### Verify Deployment
+
+1. Once deployed, test the health check endpoint:
+   ```
+   https://your-app-name.onrender.com/api/health
+   ```
+
+2. Update your frontend API configuration with the new Render URL:
+   ```javascript
+   const API_BASE_URL = 'https://your-app-name.onrender.com/api';
+   ```
+
+### Health Checks
+
+The application includes the following endpoints for monitoring:
+- `/api/health` - Basic health check
+- Error handling for 404 and 500 status codes
+
+## Database
+
+This application uses Supabase as the primary database. No other database connections are required.
+
+### Supabase Tables
+
+```sql
+Table: events
+Columns:
+- id (uuid, primary key)
+- sei_number (text)
+- send_date (date)
+- subject (text)
+- requester (text)
+- location (text)
+- focal_point (text)
+- date (date)
+- status (text)
+- sei_request (text)
+- user_id (uuid, foreign key)
+- created_at (timestamp with time zone)
+- updated_at (timestamp with time zone)
 ```
 
-The server will start at http://localhost:5000
+## Security
 
-## API Endpoints
+- All routes require authentication via Supabase JWT
+- CORS is configured for specific origins only
+- Environment variables are required for sensitive data
 
-### Authentication
-- POST /api/register - Register a new user
-- POST /api/login - Login and get JWT token
+## Maintenance
 
-### Events
-- GET /api/events - Get all events for authenticated user
-- POST /api/events - Create a new event
-- PUT /api/events/<event_id> - Update an existing event
-- DELETE /api/events/<event_id> - Delete an event
+### Logging
 
-## Request Headers
-
-For protected routes, include the JWT token in the Authorization header:
+The application uses Python's built-in logging module. Logs are formatted as:
 ```
-Authorization: <jwt_token>
+%(asctime)s - %(name)s - %(levelname)s - %(message)s
 ```
 
-## Database Schema
+### Error Handling
 
-### Users
-- id (Primary Key)
-- username (Unique)
-- password (Hashed)
-- email (Unique)
-- created_at
+- 404 errors return a JSON response
+- 500 errors are logged and return a generic error message
+- All database operations are wrapped in try-catch blocks
 
-### Events
-- id (Primary Key)
-- title
-- date_time
-- location
-- description
-- participants
-- reminders
-- created_at
-- updated_at
-- user_id (Foreign Key)
+## Support
 
-## Security Features
-
-- Password hashing using bcrypt
-- JWT-based authentication
-- Protected routes requiring valid tokens
-- Input validation and sanitization
-- CORS support for frontend integration
+For any issues or questions, please contact the development team.
