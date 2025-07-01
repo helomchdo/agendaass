@@ -44,15 +44,41 @@
       display: block;
       object-fit: contain;
     }
+
+    .confirmation-message {
+      margin: 1rem auto;
+      padding: 1rem;
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
+      border-radius: 5px;
+      font-family: 'Inter', sans-serif;
+      transition: opacity 0.3s ease;
+    }
+
+    .confirmation-message.success {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+
+    .confirmation-message.error {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <header class="header">
-    <button class="menu-button">
-      <i class="fas fa-bars"></i>
-    </button>
-    <img src="logo.png" alt="GPAC Agenda" class="logo">
-  </header>
+  <!-- Header Placeholder -->
+  <div id="app-header"></div>
+
+  <!-- Confirmation Message Container -->
+  <div id="confirmation-message" class="confirmation-message hidden"></div>
 
   <main class="container">
     <div class="card">
@@ -119,6 +145,7 @@
       </a>
     </div>
   </nav>
-  <script src="action-form.js"></script>
+  <script src="common-header.js"></script>
+  <script type="module" src="action-form.js"></script>
 </body>
 </html>
