@@ -39,25 +39,31 @@ flask run
 
 ### Deployment Steps
 
-1. In Render Dashboard:
+1. Ensure your repository structure is:
+   ```
+   gpac-agenda/
+   ├── backend/
+   │   ├── app.py
+   │   ├── requirements.txt
+   │   └── ...
+   ├── render.yaml
+   └── ...
+   ```
+
+2. In Render Dashboard:
    - Click "New +"
    - Select "Web Service"
    - Connect your GitHub repository
-   - Select the backend directory as your root directory
+   - Select the repository (Render will automatically detect render.yaml)
 
-2. Configure the Service:
+3. Configure Environment Variables in Render Dashboard:
    - Name: `gpac-agenda-api` (or your preferred name)
-   - Environment: `Python 3`
-   - Build Command: `pip install -r requirements.txt`
-   - Start Command: `gunicorn app:app --bind 0.0.0.0:$PORT`
-   - Select the appropriate instance type
-
-3. Add Environment Variables:
-   ```
-   FLASK_ENV=production
-   SUPABASE_URL=your_supabase_url
-   SUPABASE_KEY=your_supabase_key
-   ```
+   - Add the following environment variables:
+     ```
+     FLASK_ENV=production
+     SUPABASE_URL=your_supabase_url
+     SUPABASE_KEY=your_supabase_key
+     ```
 
 4. Deploy:
    - Click "Create Web Service"

@@ -2,9 +2,9 @@ services:
   - type: web
     name: gpac-agenda-api
     env: python
-    rootDir: backend  # Specify the backend directory as root
-    buildCommand: pip install -r backend/requirements.txt
-    startCommand: cd backend && gunicorn app:app --bind 0.0.0.0:$PORT
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
     envVars:
       - key: FLASK_ENV
         value: production
