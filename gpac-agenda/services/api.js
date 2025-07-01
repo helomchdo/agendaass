@@ -1,22 +1,34 @@
-import { supabase } from '../backend/static/supabaseclient.js';
+import { supabase } from './supabaseclient.js';
+
+console.log('API Service Loaded');
 
 // Event API functions
 export const eventAPI = {
     // Get all events from Supabase directly
     getAllEvents: async () => {
+        console.log('Fetching events from Supabase...');
         try {
             const { data, error } = await supabase
                 .from('solicitacoes')
                 .select('*')
                 .order('date', { ascending: true });
 
+            console.log('Supabase response:', { data, error });
+
             if (error) {
                 console.error('Error fetching events:', error);
                 throw error;
             }
             
+            if (!data) {
+                console.log('No events found');
+                return [];
+            }
+
+            console.log('Raw events data:', data);
+            
             // Transform the data to match the expected format
-            return data.map(event => ({
+            const transformedEvents = data.map(event => ({
                 id: event.id,
                 title: event.subject || 'Sem título',
                 date: event.date,
@@ -29,6 +41,9 @@ export const eventAPI = {
                 focal_point: event.focal_point,
                 sei_request: event.sei_request
             }));
+
+            console.log('Transformed events:', transformedEvents);
+            return transformedEvents;
         } catch (error) {
             console.error('Error fetching events:', error);
             throw error;

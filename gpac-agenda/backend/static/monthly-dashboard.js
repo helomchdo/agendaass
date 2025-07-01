@@ -1,4 +1,7 @@
-import { eventAPI } from '../services/api.js';
+import { eventAPI } from '../../services/api.js';
+
+// Debug logging
+console.log('Monthly Dashboard Script Loaded');
 
 document.addEventListener('DOMContentLoaded', function() {
     let calendar;
@@ -15,24 +18,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateCalendarEvents() {
-        const calendarEvents = events.map(event => ({
-            id: event.id,
-            title: event.title,
-            start: event.date,
-            end: event.date,
-            extendedProps: {
-                sei_number: event.sei_number,
-                location: event.location,
-                requester: event.requester,
-                focal_point: event.focal_point,
-                status: event.status,
-                send_date: event.send_date
-            },
-            backgroundColor: getEventColor(event.status)
-        }));
+        console.log('Updating calendar events...');
+        console.log('Raw events:', events);
+
+        const calendarEvents = events.map(event => {
+            console.log('Processing event:', event);
+            return {
+                id: event.id,
+                title: event.title || event.subject || 'Sem título', // Try both title and subject
+                start: event.date,
+                end: event.date,
+                extendedProps: {
+                    sei_number: event.sei_number,
+                    location: event.location,
+                    requester: event.requester,
+                    focal_point: event.focal_point,
+                    status: event.status,
+                    send_date: event.send_date
+                },
+                backgroundColor: getEventColor(event.status)
+            };
+        });
+
+        console.log('Transformed calendar events:', calendarEvents);
 
         calendar.removeAllEvents();
         calendar.addEventSource(calendarEvents);
+        console.log('Calendar events updated');
     }
 
     function getEventColor(status) {

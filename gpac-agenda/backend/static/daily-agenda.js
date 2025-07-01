@@ -1,4 +1,7 @@
-import { eventAPI } from '../services/api.js';
+import { eventAPI } from '../../services/api.js';
+
+// Debug logging
+console.log('Daily Agenda Script Loaded');
 
 document.addEventListener("DOMContentLoaded", () => {
     const prevDayBtn = document.getElementById("prevDay");
@@ -55,15 +58,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateUI(date) {
+        console.log('Updating UI for date:', date);
         const isoDate = date.toISOString().split("T")[0];
-        const dayEvents = events.filter(event => event.date === isoDate);
+        console.log('ISO date for filtering:', isoDate);
+        console.log('Available events:', events);
+
+        const dayEvents = events.filter(event => {
+            console.log('Comparing event date:', event.date, 'with isoDate:', isoDate);
+            return event.date === isoDate;
+        });
+        console.log('Filtered events for the day:', dayEvents);
+
         const isToday = date.toDateString() === new Date().toDateString();
 
         // Update date display
-        currentDateElem.textContent = `${formatDate(date)}${isToday ? ' (Hoje)' : ''}`;
+        const formattedDate = formatDate(date);
+        console.log('Formatted date:', formattedDate);
+        currentDateElem.textContent = `${formattedDate}${isToday ? ' (Hoje)' : ''}`;
 
         // Update event count
         eventCountElem.textContent = `(${dayEvents.length} eventos)`;
+        console.log('Event count updated:', dayEvents.length);
 
         // Update no events message if needed
         const noEventsSubmessage = document.querySelector(".no-events-submessage");
@@ -73,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
             noEventsSubmessage.textContent = `Não há eventos para ${day} de ${month}.`;
         }
 
+        console.log('Rendering events...');
         renderEvents(dayEvents);
     }
 

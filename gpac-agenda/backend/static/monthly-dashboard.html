@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/main.min.css' rel='stylesheet' />
+  <link href='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/main.min.css' rel='stylesheet' />
+  <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/main.min.js'></script>
+  <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/main.min.js'></script>
+  <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.8/main.min.js'></script>
 </head>
 <body>
   <main class="container">
@@ -27,38 +32,25 @@
         </div>
       </div>
 
-      <div class="calendar-container">
-        <div class="calendar-headers">
-          <div class="calendar-header">Dom</div>
-          <div class="calendar-header">Seg</div>
-          <div class="calendar-header">Ter</div>
-          <div class="calendar-header">Qua</div>
-          <div class="calendar-header">Qui</div>
-          <div class="calendar-header">Sex</div>
-          <div class="calendar-header">Sáb</div>
-        </div>
-        <div class="calendar-grid" id="calendarGrid">
-          <!-- Calendar days will be populated by JavaScript -->
-        </div>
-      </div>
-
+      <div id="calendar"></div>
+      
       <div class="monthly-summary">
         <h2 class="summary-title">Resumo do Mês</h2>
         <div class="summary-stats">
           <div class="stat-item">
             <i class="fas fa-calendar-check"></i>
-            <span class="stat-value">12</span>
+            <span class="stat-value" id="total-events">0</span>
             <span class="stat-label">Eventos</span>
           </div>
           <div class="stat-item">
-            <i class="fas fa-clock"></i>
-            <span class="stat-value">24h</span>
-            <span class="stat-label">Horas</span>
+            <i class="fas fa-check-circle"></i>
+            <span class="stat-value" id="approved-events">0</span>
+            <span class="stat-label">Aprovados</span>
           </div>
           <div class="stat-item">
-            <i class="fas fa-users"></i>
-            <span class="stat-value">8</span>
-            <span class="stat-label">Reuniões</span>
+            <i class="fas fa-clock"></i>
+            <span class="stat-value" id="pending-events">0</span>
+            <span class="stat-label">Pendentes</span>
           </div>
         </div>
       </div>
@@ -75,42 +67,25 @@
         <i class="fas fa-search"></i>
         <span>Busca</span>
       </a>
-      <a href="monthly-dashboard.html" class="nav-item">
+      <a href="monthly-dashboard.html" class="nav-item active">
         <i class="fas fa-calendar-alt"></i>
         <span>Mensal</span>
       </a>
-      <a href="action-form.html" class="nav-item active">
+      <a href="action-form.html" class="nav-item">
         <i class="fas fa-plus"></i>
         <span>Adicionar</span>
       </a>
     </div>
   </nav>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const calendarGrid = document.getElementById('calendarGrid');
-      const days = [
-        26, 27, 28, 29, 30, 31, 1,
-        2, 3, 4, 5, 6, 7, 8,
-        9, 10, 11, 12, 13, 14, 15,
-        16, 17, 18, 19, 20, 21, 22,
-        23, 24, 25, 26, 27, 28, 29,
-        30, 1, 2, 3, 4, 5, 6
-      ];
+  <!-- Modal for event details -->
+  <div id="eventModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div id="eventDetails"></div>
+    </div>
+  </div>
 
-      days.forEach((day, index) => {
-        const dayElement = document.createElement('div');
-        dayElement.className = 'calendar-day';
-        if (index < 5 || index > 30) {
-          dayElement.className += ' other-month';
-        }
-        if (day === 19) {
-          dayElement.className += ' today';
-        }
-        dayElement.textContent = day;
-        calendarGrid.appendChild(dayElement);
-      });
-    });
-  </script>
+  <script type="module" src="monthly-dashboard.js"></script>
 </body>
 </html>
