@@ -39,18 +39,23 @@ flask run
 
 ### Deployment Steps
 
-1. Ensure your repository structure is:
+1. Repository Structure:
    ```
    gpac-agenda/
    ├── backend/
-   │   ├── app.py
-   │   ├── requirements.txt
+   │   ├── app.py                 # Flask application
+   │   ├── requirements.txt       # Python dependencies
+   │   ├── models.py             # Supabase models
    │   └── ...
-   ├── render.yaml
-   └── ...
+   └── render.yaml               # Render deployment config
    ```
 
-2. In Render Dashboard:
+2. Verify Requirements:
+   - Ensure all dependencies are in `backend/requirements.txt`
+   - Make sure `gunicorn` is listed in requirements.txt
+   - Verify Python version compatibility
+
+3. In Render Dashboard:
    - Click "New +"
    - Select "Web Service"
    - Connect your GitHub repository
