@@ -1,63 +1,88 @@
-// API base URL - automatically detect environment
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-    ? 'https://your-production-url.com/api'  // Update this with your production URL
-    : 'http://localhost:5000/api';
-
-// Get the auth token from Supabase
-const getAuthToken = () => {
-    const session = JSON.parse(localStorage.getItem('supabase.auth.token'));
-    return session?.access_token;
-};
-
-// Helper function to make API requests
-const fetchWithAuth = async (endpoint, options = {}) => {
-    const token = getAuthToken();
-    const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        ...options.headers,
-    };
-
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        ...options,
-        headers,
-    });
-
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Something went wrong');
-    }
-
-    return response.json();
-};
+import { supabase } from '../backend/static/supabaseclient.js';
 
 // Event API functions
 export const eventAPI = {
-    // Get all events
+    // Get all events from Supabase directly
     getAllEvents: async () => {
-        return fetchWithAuth('/events');
+        try {
+            const { data, error } = await supabase
+                .from('solicitacoes')
+                .select('*')
+                .order('date', { ascending: true });
+
+            if (error) {
+                console.error('Error fetching events:', error);
+                throw error;
+            }
+            
+            // Transform the data to match the expected format
+            return data.map(event => ({
+                id: event.id,
+                title: event.subject || 'Sem título',
+                date: event.date,
+                dateTime: event.date, // For daily view
+                location: event.location,
+                status: event.status,
+                sei_number: event.sei_number,
+                send_date: event.send_date,
+                requester: event.requester,
+                focal_point: event.focal_point,
+                sei_request: event.sei_request
+            }));
+        } catch (error) {
+            console.error('Error fetching events:', error);
+            throw error;
+        }
     },
 
     // Create a new event
     createEvent: async (eventData) => {
-        return fetchWithAuth('/events', {
-            method: 'POST',
-            body: JSON.stringify(eventData),
-        });
+        try {
+            const { data, error } = await supabase
+                .from('solicitacoes')
+                .insert([eventData])
+                .select()
+                .single();
+
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Error creating event:', error);
+            throw error;
+        }
     },
 
     // Update an event
     updateEvent: async (eventId, eventData) => {
-        return fetchWithAuth(`/events/${eventId}`, {
-            method: 'PUT',
-            body: JSON.stringify(eventData),
-        });
+        try {
+            const { data, error } = await supabase
+                .from('solicitacoes')
+                .update(eventData)
+                .eq('id', eventId)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Error updating event:', error);
+            throw error;
+        }
     },
 
     // Delete an event
     deleteEvent: async (eventId) => {
-        return fetchWithAuth(`/events/${eventId}`, {
-            method: 'DELETE',
-        });
-    },
+        try {
+            const { error } = await supabase
+                .from('solicitacoes')
+                .delete()
+                .eq('id', eventId);
+
+            if (error) throw error;
+            return true;
+        } catch (error) {
+            console.error('Error deleting event:', error);
+            throw error;
+        }
+    }
 };
