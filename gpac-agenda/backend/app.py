@@ -8,6 +8,10 @@ app = Flask(
     static_url_path=''
 )
 
+from routes.solicitacoes import solicitacoes_bp
+
+app.register_blueprint(solicitacoes_bp)
+
 # CORS liberado
 CORS(app, resources={
     r"/api/*": {
