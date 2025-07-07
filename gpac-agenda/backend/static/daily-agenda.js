@@ -63,11 +63,13 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log('ISO date for filtering:', isoDate);
         console.log('Available events:', events);
 
-        const dayEvents = events.filter(event => {
-            console.log('Comparing event date:', event.date, 'with isoDate:', isoDate);
-            return event.date === isoDate;
-        });
-        console.log('Filtered events for the day:', dayEvents);
+       const dayEvents = events.filter(event => {
+  const evDate = event.date.split('T')[0]; // extrai só a parte YYYY-MM-DD
+  console.log('Comparing event date:', evDate, 'with isoDate:', isoDate);
+  return evDate === isoDate;
+});
+
+console.log('Filtered events for the day:', dayEvents);
 
         const isToday = date.toDateString() === new Date().toDateString();
 
