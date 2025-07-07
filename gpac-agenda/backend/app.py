@@ -23,13 +23,14 @@ def serve_index():
     return app.send_static_file('index.html')
 
 # Serve arquivos estáticos (JS, CSS, imagens etc.)
-@app.route('/<path:path>')
-def serve_static_file(path):
-    @app.route('/api/<path:path>')
+@app.route('/api/<path:path>')
 def api_404(path):
     return jsonify({"error": "Resource not found"}), 404
 
+@app.route('/<path:path>')
+def serve_static_file(path):
     return send_from_directory(app.static_folder, path)
+
 
 # Exemplo de rota da API (saúde do sistema)
 @app.route('/api/health', methods=['GET'])
