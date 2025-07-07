@@ -8,7 +8,8 @@ app = Flask(
     static_url_path=''
 )
 
-from routes.solicitacoes import solicitacoes_bp
+from backend.routes.solicitacoes import solicitacoes_bp
+
 
 app.register_blueprint(solicitacoes_bp)
 
@@ -45,3 +46,4 @@ def health_check():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
