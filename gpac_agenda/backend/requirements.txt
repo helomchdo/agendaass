@@ -14,3 +14,4 @@ requests==2.31.0
 
 # Production Dependencies
 werkzeug==2.0.1
+supabase
