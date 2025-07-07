@@ -1,103 +1,77 @@
-import { supabase } from './supabaseclient.js';
 
-console.log('API Service Loaded');
+import { getAuthHeader } from './auth.js';
 
-// Event API functions
+const BASE = '/api/solicitacoes';   // todas as rotas do back‑end Flask
+
 export const eventAPI = {
-    // Get all events from Supabase directly
-    getAllEvents: async () => {
-        console.log('Fetching events from Supabase...');
-        try {
-            const { data, error } = await supabase
-                .from('solicitacoes')
-                .select('*')
-                .order('date', { ascending: true });
+  // ---------- LISTAR ----------
+  async getAllEvents(params = '') {
+    // params pode ser algo como '?start=2025-07-01&end=2025-07-31'
+    const resp = await fetch(`${BASE}${params}`, {
+      headers: { ...getAuthHeader() }
+    });
+    if (!resp.ok) throw await resp.json();
+    const data = await resp.json();
+    return data.map(mapToCalendar);
+  },
 
-            console.log('Supabase response:', { data, error });
+  // alias (caso outras partes chamem getAll)
+  async getAll(params = '') {
+    return this.getAllEvents(params);
+  },
 
-            if (error) {
-                console.error('Error fetching events:', error);
-                throw error;
-            }
-            
-            if (!data) {
-                console.log('No events found');
-                return [];
-            }
+  // ---------- CRIAR ----------
+  async create(evento) {
+    const resp = await fetch(BASE, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeader()
+      },
+      body: JSON.stringify(evento)
+    });
+    if (!resp.ok) throw await resp.json();
+    return mapToCalendar(await resp.json());
+  },
 
-            console.log('Raw events data:', data);
-            
-            // Transform the data to match the expected format
-            const transformedEvents = data.map(event => ({
-                id: event.id,
-                title: event.subject || 'Sem título',
-                date: event.date,
-                dateTime: event.date, // For daily view
-                location: event.location,
-                status: event.status,
-                sei_number: event.sei_number,
-                send_date: event.send_date,
-                requester: event.requester,
-                focal_point: event.focal_point,
-                sei_request: event.sei_request
-            }));
+  // ---------- ATUALIZAR ----------
+  async update(id, data) {
+    const resp = await fetch(`${BASE}/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeader()
+      },
+      body: JSON.stringify(data)
+    });
+    if (!resp.ok) throw await resp.json();
+    return await resp.json();
+  },
 
-            console.log('Transformed events:', transformedEvents);
-            return transformedEvents;
-        } catch (error) {
-            console.error('Error fetching events:', error);
-            throw error;
-        }
-    },
-
-    // Create a new event
-    createEvent: async (eventData) => {
-        try {
-            const { data, error } = await supabase
-                .from('solicitacoes')
-                .insert([eventData])
-                .select()
-                .single();
-
-            if (error) throw error;
-            return data;
-        } catch (error) {
-            console.error('Error creating event:', error);
-            throw error;
-        }
-    },
-
-    // Update an event
-    updateEvent: async (eventId, eventData) => {
-        try {
-            const { data, error } = await supabase
-                .from('solicitacoes')
-                .update(eventData)
-                .eq('id', eventId)
-                .select()
-                .single();
-
-            if (error) throw error;
-            return data;
-        } catch (error) {
-            console.error('Error updating event:', error);
-            throw error;
-        }
-    },
-
-    // Delete an event
-    deleteEvent: async (eventId) => {
-        try {
-            const { error } = await supabase
-                .from('solicitacoes')
-                .delete()
-                .eq('id', eventId);
-
-            if (error) throw error;
-            return true;
-        } catch (error) {
-            console.error('Error deleting event:', error);
-            throw error;
-        }
-    }
+  // ---------- DELETAR ----------
+  async remove(id) {
+    const resp = await fetch(`${BASE}/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeader()
+    });
+    if (!resp.ok) throw await resp.json();
+    return await resp.json();
+  }
 };
+
+// ----------------- MAPEAMENTO -----------------
+function mapToCalendar(ev) {
+  return {
+    id: ev.id,
+    title: ev.assunto,           // título / assunto do evento
+    date: ev.data_evento,        // ISO string YYYY‑MM‑DD
+    start: ev.data_evento,
+    end: ev.data_evento,
+    location: ev.local,
+    status: ev.situacao,
+    focal_point: ev.ponto_focal,
+    seiNumber: ev.sei,
+    sendDate: ev.data_envio_gi,
+    requester: ev.solicitante
+  };
+}
