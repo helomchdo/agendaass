@@ -8,9 +8,7 @@ app = Flask(
     static_url_path=''
 )
 
-from backend.routes.solicitacoes import solicitacoes_bp
-
-
+from .routes.solicitacoes import solicitacoes_bp
 app.register_blueprint(solicitacoes_bp)
 
 # CORS liberado
