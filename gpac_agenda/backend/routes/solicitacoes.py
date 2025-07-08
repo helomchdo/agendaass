@@ -14,7 +14,7 @@ solicitacoes_bp = Blueprint(
     "solicitacoes",
     __name__,
     url_prefix="/api/solicitacoes",
-    strict_slashes=False            # aceita /api/solicitacoes e /api/solicitacoes/
+               # aceita /api/solicitacoes e /api/solicitacoes/
 )
 
 # ─── Helpers ──────────────────────────────────────────────────────────────
