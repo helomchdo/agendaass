@@ -1304,4 +1304,16 @@ label {
   gap: 0.5rem; /* espaço entre ícone e texto */
 }
 
+.monthly-header {
+    display: flex;
+    justify-content: center;
+}
+
+.monthly-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+}
+
 }
