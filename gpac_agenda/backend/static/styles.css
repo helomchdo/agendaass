@@ -1296,4 +1296,12 @@ label {
   .summary-title {
     font-size: 1.125rem;
   }
+
+  .monthly-title {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* centraliza horizontalmente */
+  gap: 0.5rem; /* espaço entre ícone e texto */
+}
+
 }
