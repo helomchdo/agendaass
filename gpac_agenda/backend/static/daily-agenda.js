@@ -1,6 +1,5 @@
 import { eventAPI } from '../../services/api.js';
 
-// Debug logging
 console.log('Daily Agenda Script Loaded');
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -33,14 +32,16 @@ document.addEventListener("DOMContentLoaded", () => {
             eventsContainer.innerHTML = dayEvents.map(event => `
                 <div class="event-card">
                     <div class="event-header">
-                        <h3>${event.title}</h3>
-                        <span class="event-status ${event.status.toLowerCase()}">${event.status}</span>
+                        <h3>${event.assunto || 'Sem título'}</h3>
+                        <span class="event-status ${event.situacao?.toLowerCase() || 'desconhecido'}">
+                            ${event.situacao || 'Sem status'}
+                        </span>
                     </div>
                     <div class="event-details">
-                        <p><strong>SEI:</strong> ${event.sei_number}</p>
-                        <p><strong>Local:</strong> ${event.location}</p>
-                        <p><strong>Solicitante:</strong> ${event.requester}</p>
-                        <p><strong>Ponto Focal:</strong> ${event.focal_point}</p>
+                        <p><strong>SEI:</strong> ${event.sei || '-'}</p>
+                        <p><strong>Local:</strong> ${event.local || '-'}</p>
+                        <p><strong>Solicitante:</strong> ${event.solicitante || '-'}</p>
+                        <p><strong>Ponto Focal:</strong> ${event.ponto_focal || '-'}</p>
                     </div>
                 </div>
             `).join('');
@@ -52,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
             events = await eventAPI.getAllEvents();
             updateUI(currentDate);
         } catch (error) {
-            console.error("Error fetching events:", error);
+            console.error("Erro ao buscar eventos:", error);
             alert("Falha ao carregar eventos. Por favor, tente novamente.");
         }
     }
@@ -63,26 +64,20 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log('ISO date for filtering:', isoDate);
         console.log('Available events:', events);
 
-       const dayEvents = events.filter(event => {
-  const evDate = event.date.split('T')[0]; // extrai só a parte YYYY-MM-DD
-  console.log('Comparing event date:', evDate, 'with isoDate:', isoDate);
-  return evDate === isoDate;
-});
+        const dayEvents = events.filter(event => {
+            const evDate = event.data_evento?.split("T")[0];
+            console.log('Comparing event date:', evDate, 'with isoDate:', isoDate);
+            return evDate === isoDate;
+        });
 
-console.log('Filtered events for the day:', dayEvents);
+        console.log('Filtered events for the day:', dayEvents);
 
         const isToday = date.toDateString() === new Date().toDateString();
 
-        // Update date display
         const formattedDate = formatDate(date);
-        console.log('Formatted date:', formattedDate);
         currentDateElem.textContent = `${formattedDate}${isToday ? ' (Hoje)' : ''}`;
-
-        // Update event count
         eventCountElem.textContent = `(${dayEvents.length} eventos)`;
-        console.log('Event count updated:', dayEvents.length);
 
-        // Update no events message if needed
         const noEventsSubmessage = document.querySelector(".no-events-submessage");
         if (noEventsSubmessage) {
             const day = date.getDate();
@@ -90,7 +85,6 @@ console.log('Filtered events for the day:', dayEvents);
             noEventsSubmessage.textContent = `Não há eventos para ${day} de ${month}.`;
         }
 
-        console.log('Rendering events...');
         renderEvents(dayEvents);
     }
 
@@ -104,6 +98,5 @@ console.log('Filtered events for the day:', dayEvents);
         updateUI(currentDate);
     });
 
-    // Initial fetch and render
     fetchEvents();
 });
