@@ -61,7 +61,7 @@ def obter_solicitacao(sol_id):
 def criar_solicitacao():
     """POST /api/solicitacoes – cria nova"""
     body = request.get_json() or {}
-    body.setdefault("data_envio_gi", datetime.utcnow().isoformat())
+    body.setdefault("data_envio_gpac", datetime.utcnow().isoformat())
     body.setdefault("situacao", "SOLICITADO")
 
     try:
