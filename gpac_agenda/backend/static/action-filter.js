@@ -141,7 +141,10 @@ async function init() {
   filtrarAcoes(acoes);
 }
 
+window.filtrarAcoes = filtrarAcoes;
+window.renderizarLista = renderizarLista;
+window.acoes = acoes;
+
 init();
 
-window.filtrarAcoes = filtrarAcoes;
-window.acoes = acoes;
+
