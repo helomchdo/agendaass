@@ -142,3 +142,6 @@ async function init() {
 }
 
 init();
+
+window.filtrarAcoes = filtrarAcoes;
+window.acoes = acoes;
