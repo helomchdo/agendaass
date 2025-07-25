@@ -30,12 +30,14 @@ def _erro_resp(exc, status_code=400):
 def listar_solicitacoes():
     """GET /api/solicitacoes – lista tudo"""
     try:
+        print("Consultando Supabase...")
         resp = (
             supabase.table("solicitacoes")
             .select("*")
             .order("id", desc=True)
             .execute()
         )
+        print("Resposta Supabase:", resp)
         return jsonify(resp.data), 200
     except Exception as exc:
         return _erro_resp(exc, 500)
