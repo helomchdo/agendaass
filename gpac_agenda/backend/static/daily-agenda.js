@@ -23,30 +23,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderEvents(dayEvents) {
-        if (dayEvents.length === 0) {
-            noEventsContainer.style.display = "block";
-            eventsContainer.style.display = "none";
-        } else {
-            noEventsContainer.style.display = "none";
-            eventsContainer.style.display = "block";
-            eventsContainer.innerHTML = dayEvents.map(event => `
-                <div class="event-card">
-                    <div class="event-header">
-                        <h3>${event.assunto || 'Sem título'}</h3>
-                        <span class="event-status ${event.situacao?.toLowerCase() || 'desconhecido'}">
-                            ${event.situacao || 'Sem status'}
-                        </span>
-                    </div>
-                    <div class="event-details">
-                        <p><strong>SEI:</strong> ${event.sei || '-'}</p>
-                        <p><strong>Local:</strong> ${event.local || '-'}</p>
-                        <p><strong>Solicitante:</strong> ${event.solicitante || '-'}</p>
-                        <p><strong>Ponto Focal:</strong> ${event.ponto_focal || '-'}</p>
-                    </div>
+    if (dayEvents.length === 0) {
+        noEventsContainer.style.display = "block";
+        eventsContainer.style.display = "none";
+    } else {
+        noEventsContainer.style.display = "none";
+        eventsContainer.style.display = "block";
+        eventsContainer.innerHTML = dayEvents.map(event => `
+            <div class="event-card">
+                <div class="event-header">
+                    <h3>${event.title || event.assunto || 'Sem título'}</h3>
+                    <span class="event-status ${event.situacao?.toLowerCase() || 'desconhecido'}">
+                        ${event.situacao || 'Sem status'}
+                    </span>
                 </div>
-            `).join('');
-        }
+                <div class="event-details">
+                    <p><strong>Data:</strong> ${event.date || event.start || '-'}</p>
+                    <p><strong>Local:</strong> ${event.local || '-'}</p>
+                    <p><strong>Solicitante:</strong> ${event.solicitante || '-'}</p>
+                    <p><strong>Ponto Focal:</strong> ${event.ponto_focal || '-'}</p>
+                </div>
+            </div>
+        `).join('');
     }
+}
 
     async function fetchEvents() {
         try {
