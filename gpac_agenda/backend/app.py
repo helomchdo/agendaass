@@ -25,10 +25,6 @@ CORS(app, resources={
 def serve_index():
     return app.send_static_file('index.html')
 
-# Serve arquivos estáticos (JS, CSS, imagens etc.)
-@app.route('/api/<path:path>')
-def api_404(path):
-    return jsonify({"error": "Resource not found"}), 404
 
 @app.route('/<path:path>')
 def serve_static_file(path):
@@ -45,3 +41,7 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
 
+# Serve arquivos estáticos (JS, CSS, imagens etc.)
+@app.route('/api/<path:path>')
+def api_404(path):
+    return jsonify({"error": "Resource not found"}), 404
