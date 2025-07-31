@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log('Available events:', events);
 
         const dayEvents = events.filter(event => {
-            const evDate = event.data_envio_gpac?.split(" ")[0];
+            const evDate = event.date || event.start;
             console.log('Comparing event date:', evDate, 'with isoDate:', isoDate);
             return evDate === isoDate;
         });
