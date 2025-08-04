@@ -3,69 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GPAC Agenda - Filtrar Ações</title>
+  <title>GPAC Agenda - Filtro de Ações</title>
   <link rel="stylesheet" href="styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 <body>
-  <!-- Header Placeholder -->
   <div id="app-header"></div>
 
-  <!-- Loading Spinner -->
   <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
   </div>
 
   <main class="container">
     <div class="card">
-      <div class="daily-header">
-        <h1 class="daily-title">
-          <i class="fas fa-search"></i> Filtrar Ações
-        </h1>
-      </div>
+      <h1 class="daily-title">
+        <i class="fas fa-filter"></i> Filtro de Ações
+      </h1>
 
-      <div class="filter-methods">
-        <button id="filterByText" class="btn-primary active">
-          <i class="fas fa-font"></i> Filtrar por Texto
-        </button>
-        <button id="filterByDate" class="btn-secondary">
-          <i class="fas fa-calendar"></i> Filtrar por Data
-        </button>
-      </div>
-
-      <div class="filtros" id="textFilters">
+      <form id="filtro-form">
         <div class="form-group">
           <label for="filtro-num-sei">Número do SEI</label>
           <input type="text" id="filtro-num-sei" placeholder="Digite o número do SEI" />
         </div>
+
         <div class="form-group">
           <label for="filtro-assunto">Assunto</label>
-          <input type="text" id="filtro-assunto" placeholder="Digite o assunto" />
+          <input type="text" id="filtro-assunto" />
         </div>
+
         <div class="form-group">
           <label for="filtro-solicitante">Solicitante</label>
-          <input type="text" id="filtro-solicitante" placeholder="Digite o solicitante" />
+          <input type="text" id="filtro-solicitante" />
         </div>
+
         <div class="form-group">
           <label for="filtro-local">Local</label>
-          <input type="text" id="filtro-local" placeholder="Digite o local" />
+          <input type="text" id="filtro-local" />
         </div>
+
         <div class="form-group">
           <label for="filtro-ponto-focal">Ponto Focal</label>
-          <input type="text" id="filtro-ponto-focal" placeholder="Digite o ponto focal" />
+          <input type="text" id="filtro-ponto-focal" />
         </div>
-      </div>
 
-      <div class="filtros hidden" id="dateFilters">
         <div class="form-group">
           <label for="filtro-data-envio">Data de Envio</label>
           <input type="date" id="filtro-data-envio" />
         </div>
+
         <div class="form-group">
-          <label for="filtro-data">Data</label>
+          <label for="filtro-data">Data do Evento</label>
           <input type="date" id="filtro-data" />
         </div>
+
         <div class="form-group">
           <label for="filtro-situacao">Situação</label>
           <select id="filtro-situacao">
@@ -77,24 +68,30 @@
             <option value="ATENDIDO">ATENDIDO</option>
           </select>
         </div>
-        <div class="form-group">
-          <label for="filtro-sei-solicitacao">SEI de solicitação das diárias</label>
-          <input type="text" id="filtro-sei-solicitacao" placeholder="Digite o SEI da solicitação" />
-        </div>
-      </div>
 
-      <div class="form-buttons">
-        <button id="filtrar-botao" class="btn-primary">
-          <i class="fas fa-search"></i> Filtrar
-        </button>
-      <ul id="lista-acoes" class="action-list"></ul>
+        <div class="form-group">
+          <label for="filtro-sei-solicitacao">SEI da Solicitação das Diárias</label>
+          <input type="text" id="filtro-sei-solicitacao" />
+        </div>
+
+        <div class="form-buttons">
+          <button type="submit" class="btn-primary">
+            <i class="fas fa-search"></i> Filtrar
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2 class="form-title">Resultados</h2>
+      <ul id="lista-acoes" class="events-container"></ul>
     </div>
   </main>
 
-  <!-- Navbar Placeholder -->
   <div id="app-navbar"></div>
 
   <script src="common-header.js"></script>
   <script src="common-navbar.js"></script>
-  </body>
+  <script type="module" src="action-filter.js"></script>
+</body>
 </html>

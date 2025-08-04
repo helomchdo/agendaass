@@ -1,150 +1,97 @@
-const listaAcoes = document.getElementById('lista-acoes');
-
-const filterByTextBtn = document.getElementById('filterByText');
-const filterByDateBtn = document.getElementById('filterByDate');
-
-const textFilters = document.getElementById('textFilters');
-const dateFilters = document.getElementById('dateFilters');
-
-const loading = document.getElementById('loading');
+const listaAcoes = document.getElementById("lista-acoes");
+const loading = document.getElementById("loading");
 
 async function fetchAcoes() {
   try {
-    loading.classList.remove('hidden');
-    const response = await fetch('/api/solicitacoes');
-    if (!response.ok) throw new Error('Failed to fetch actions');
+    loading.classList.remove("hidden");
+    const response = await fetch("/api/solicitacoes");
+    if (!response.ok) throw new Error("Erro ao buscar ações");
     const data = await response.json();
 
     return data.map(item => ({
-      numSei: item.sei,
-      dataEnvio: item.data_envio_gpac?.split('T')[0],
+      sei: item.sei,
       assunto: item.assunto,
       solicitante: item.solicitante,
       local: item.local,
       pontoFocal: item.ponto_focal,
-      data: item.data_evento,
+      dataEnvio: item.data_envio_gpac?.split("T")[0],
+      dataEvento: item.data_evento,
       situacao: item.situacao,
-      seiSolicitacao: item.sei_diarias
+      seiDiarias: item.sei_diarias
     }));
   } catch (error) {
-    const errorMsg = 'Erro ao carregar ações. Por favor, tente novamente.';
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4';
-    errorDiv.innerHTML = `<span class="block sm:inline">${errorMsg}</span>`;
-    document.body.insertBefore(errorDiv, document.body.firstChild);
+    alert("Erro ao carregar ações.");
     console.error(error);
     return [];
   } finally {
-    loading.classList.add('hidden');
+    loading.classList.add("hidden");
   }
 }
 
-function renderizarLista(lista) {
-  listaAcoes.innerHTML = '';
+function renderAcoes(lista) {
+  listaAcoes.innerHTML = "";
 
   if (lista.length === 0) {
-    const li = document.createElement('li');
-    li.className = 'no-results';
-    li.innerHTML = `<i class="fas fa-search"></i><p>Nenhuma ação encontrada</p>`;
-    listaAcoes.appendChild(li);
+    const vazio = document.createElement("div");
+    vazio.className = "no-events-container";
+    vazio.innerHTML = `
+      <i class="fas fa-inbox no-events-icon"></i>
+      <p class="no-events-message">Nenhuma ação encontrada</p>
+    `;
+    listaAcoes.appendChild(vazio);
     return;
   }
 
   lista.forEach(acao => {
-    const li = document.createElement('li');
-    li.className = 'action-item';
-
-    const fields = [
-      { label: 'Número SEI', value: acao.numSei },
-      { label: 'Data de envio', value: acao.dataEnvio },
-      { label: 'Assunto', value: acao.assunto },
-      { label: 'Solicitante', value: acao.solicitante },
-      { label: 'Local', value: acao.local },
-      { label: 'Ponto Focal', value: acao.pontoFocal },
-      { label: 'Data', value: acao.data },
-      { label: 'Situação', value: acao.situacao },
-      { label: 'SEI Solicitação', value: acao.seiSolicitacao || '-' }
-    ];
-
-    li.innerHTML = fields.map(f =>
-      `<div class="action-field"><span class="field-label">${f.label}:</span> ${f.value || '-'}</div>`
-    ).join('');
-
-    listaAcoes.appendChild(li);
+    const el = document.createElement("li");
+    el.className = "event-card";
+    el.innerHTML = `
+      <div class="event-header">
+        <h3>${acao.assunto || "Sem título"}</h3>
+        <span class="status-${acao.situacao?.toLowerCase()?.replace(/_/g, '-') || 'indefinido'}">${acao.situacao || '-'}</span>
+      </div>
+      <p><strong>Nº SEI:</strong> ${acao.sei || '-'}</p>
+      <p><strong>Solicitante:</strong> ${acao.solicitante || '-'}</p>
+      <p><strong>Local:</strong> ${acao.local || '-'}</p>
+      <p><strong>Ponto Focal:</strong> ${acao.pontoFocal || '-'}</p>
+      <p><strong>Data Evento:</strong> ${acao.dataEvento || '-'}</p>
+      <p><strong>Data Envio:</strong> ${acao.dataEnvio || '-'}</p>
+      <p><strong>SEI Diárias:</strong> ${acao.seiDiarias || '-'}</p>
+    `;
+    listaAcoes.appendChild(el);
   });
 }
 
-function filtrarAcoes(acoes) {
-  let filtradas = [];
+function aplicarFiltros(lista) {
+  const f = campo => document.getElementById(campo).value.toLowerCase().trim();
+  const fd = id => document.getElementById(id).value;
 
-  if (textFilters.style.display !== 'none') {
-    const numSeiVal = document.getElementById('filtro-num-sei').value.trim().toLowerCase();
-    const assuntoVal = document.getElementById('filtro-assunto').value.trim().toLowerCase();
-    const solicitanteVal = document.getElementById('filtro-solicitante').value.trim().toLowerCase();
-    const localVal = document.getElementById('filtro-local').value.trim().toLowerCase();
-    const pontoFocalVal = document.getElementById('filtro-ponto-focal').value.trim().toLowerCase();
-
-    filtradas = acoes.filter(acao => (
-      (!numSeiVal || acao.numSei?.toLowerCase().includes(numSeiVal)) &&
-      (!assuntoVal || acao.assunto?.toLowerCase().includes(assuntoVal)) &&
-      (!solicitanteVal || acao.solicitante?.toLowerCase().includes(solicitanteVal)) &&
-      (!localVal || acao.local?.toLowerCase().includes(localVal)) &&
-      (!pontoFocalVal || acao.pontoFocal?.toLowerCase().includes(pontoFocalVal))
-    ));
-  } else {
-    const dataEnvioVal = document.getElementById('filtro-data-envio').value;
-    const dataVal = document.getElementById('filtro-data').value;
-    const situacaoVal = document.getElementById('filtro-situacao').value;
-    const seiSolicitacaoVal = document.getElementById('filtro-sei-solicitacao').value.trim().toLowerCase();
-
-    filtradas = acoes.filter(acao => (
-      (!dataEnvioVal || acao.dataEnvio === dataEnvioVal) &&
-      (!dataVal || acao.data === dataVal) &&
-      (!situacaoVal || acao.situacao === situacaoVal) &&
-      (!seiSolicitacaoVal || acao.seiSolicitacao?.toLowerCase().includes(seiSolicitacaoVal))
-    ));
-  }
-
-  renderizarLista(filtradas);
+  return lista.filter(acao => {
+    return (
+      (!f("filtro-num-sei") || acao.sei?.toLowerCase().includes(f("filtro-num-sei"))) &&
+      (!f("filtro-assunto") || acao.assunto?.toLowerCase().includes(f("filtro-assunto"))) &&
+      (!f("filtro-solicitante") || acao.solicitante?.toLowerCase().includes(f("filtro-solicitante"))) &&
+      (!f("filtro-local") || acao.local?.toLowerCase().includes(f("filtro-local"))) &&
+      (!f("filtro-ponto-focal") || acao.pontoFocal?.toLowerCase().includes(f("filtro-ponto-focal"))) &&
+      (!fd("filtro-data-envio") || acao.dataEnvio === fd("filtro-data-envio")) &&
+      (!fd("filtro-data") || acao.dataEvento === fd("filtro-data")) &&
+      (!f("filtro-situacao") || acao.situacao === document.getElementById("filtro-situacao").value) &&
+      (!f("filtro-sei-solicitacao") || acao.seiDiarias?.toLowerCase().includes(f("filtro-sei-solicitacao")))
+    );
+  });
 }
 
-let acoes = [];
+let todasAcoes = [];
 
-filterByTextBtn.addEventListener('click', () => {
-  filterByTextBtn.classList.add('active', 'btn-primary');
-  filterByTextBtn.classList.remove('btn-secondary');
-  filterByDateBtn.classList.remove('active', 'btn-primary');
-  filterByDateBtn.classList.add('btn-secondary');
-  textFilters.classList.remove('hidden');
-  dateFilters.classList.add('hidden');
-  filtrarAcoes(acoes);
-});
-
-filterByDateBtn.addEventListener('click', () => {
-  filterByDateBtn.classList.add('active', 'btn-primary');
-  filterByDateBtn.classList.remove('btn-secondary');
-  filterByTextBtn.classList.remove('active', 'btn-primary');
-  filterByTextBtn.classList.add('btn-secondary');
-  dateFilters.classList.remove('hidden');
-  textFilters.classList.add('hidden');
-  filtrarAcoes(acoes);
-});
-
-document.getElementById('filtrar-botao').addEventListener('click', () => {
-  loading.classList.remove('hidden');
-  filtrarAcoes(acoes);
-  loading.classList.add('hidden');
+document.getElementById("filtro-form").addEventListener("submit", e => {
+  e.preventDefault();
+  const resultado = aplicarFiltros(todasAcoes);
+  renderAcoes(resultado);
 });
 
 async function init() {
-  acoes = await fetchAcoes();
-  filtrarAcoes(acoes);
+  todasAcoes = await fetchAcoes();
+  renderAcoes(todasAcoes);
 }
 
-window.filtrarAcoes = filtrarAcoes;
-window.renderizarLista = renderizarLista;
-window.acoes = acoes;
-
 init();
-
-
