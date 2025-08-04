@@ -1,5 +1,5 @@
 import { eventAPI } from '../../services/api.js';  
-console.log('[Monthly] script carregado');
+console.log ('[Monthly] script carregado');
 
 document.addEventListener('DOMContentLoaded', async () => {
   const calendarEl = document.getElementById('calendar');
@@ -15,14 +15,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     headerToolbar: {
       left: 'prev',
       center: 'title',
-      right: 'next'
+      right: 'next',
     },
     eventClassNames(arg) {
       return arg.event.extendedProps.status?.toLowerCase() || '';
-    }
+    },
+    eventClick: function(info) {
+  const event = info.event;
+  const detailsHTML = `
+    <h3>${event.title}</h3>
+    <p><strong>Data:</strong> ${event.start.toLocaleDateString()}</p>
+    <p><strong>Local:</strong> ${event.extendedProps.location || 'N/A'}</p>
+    <p><strong>Responsável:</strong> ${event.extendedProps.focal_point || 'N/A'}</p>
+    <p><strong>SEI:</strong> ${event.extendedProps.sei || 'N/A'}</p>
+    <button class="btn-primary" id="editEventBtn">Editar</button>
+  `;
+  document.getElementById("eventDetails").innerHTML = detailsHTML;
+  document.getElementById("eventModal").style.display = "block";
+
+  document.getElementById("editEventBtn").onclick = () => {
+    window.location.href = `/editar.html?id=${event.id}`;
+  };
+},
+
   });
 
   calendar.render();
+
+  document.querySelector(".modal .close").addEventListener("click", () => {
+  document.getElementById("eventModal").style.display = "none";
+});
+
 
   try {
     const eventos = await eventAPI.getAllEvents();
