@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>Editar Ação</title>
-  <link rel="stylesheet" href="styles.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="action-form">
 
@@ -12,8 +12,23 @@
     <h2 class="form-title">Editar Ação</h2>
 
     <div class="form-group">
-      <label for="title">Título</label>
-      <input type="text" id="title" name="title" />
+      <label for="seiNumber">Número do SEI</label>
+      <input type="text" id="seiNumber" name="seiNumber" />
+    </div>
+
+    <div class="form-group">
+      <label for="sendDate">Data de envio</label>
+      <input type="date" id="sendDate" name="sendDate" />
+    </div>
+
+    <div class="form-group">
+      <label for="subject">Assunto</label>
+      <input type="text" id="subject" name="subject" />
+    </div>
+
+    <div class="form-group">
+      <label for="requester">Solicitante</label>
+      <input type="text" id="requester" name="requester" />
     </div>
 
     <div class="form-group">
@@ -22,13 +37,30 @@
     </div>
 
     <div class="form-group">
-      <label for="focal_point">Responsável</label>
+      <label for="focal_point">Ponto focal</label>
       <input type="text" id="focal_point" name="focal_point" />
     </div>
 
     <div class="form-group">
-      <label for="seiNumber">Número SEI</label>
-      <input type="text" id="seiNumber" name="seiNumber" />
+      <label for="date">Data</label>
+      <input type="date" id="date" name="date" />
+    </div>
+
+    <div class="form-group">
+      <label for="status">Situação</label>
+      <select id="status" name="status">
+        <option value="">Selecionar</option>
+        <option value="SOLICITADO">SOLICITADO</option>
+        <option value="ARTICULADO">ARTICULADO</option>
+        <option value="REALIZADA">REALIZADA</option>
+        <option value="CANCELADO_PELO_SOLICITANTE">CANCELADO PELO SOLICITANTE</option>
+        <option value="ATENDIDO">ATENDIDO</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="seiRequest">SEI de solicitação das diárias</label>
+      <input type="text" id="seiRequest" name="seiRequest" />
     </div>
 
     <div class="form-buttons">
@@ -37,74 +69,7 @@
     </div>
   </form>
 
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
-
-    let dadosOriginais = {};
-
-    if (!id) {
-      alert("ID não fornecido!");
-      window.location.href = "monthly-dashboard.html";
-    }
-
-    async function carregarDados() {
-      try {
-        const res = await fetch(`/api/solicitacoes/${id}`);
-        if (!res.ok) throw new Error("Erro ao carregar solicitação");
-        const data = await res.json();
-        dadosOriginais = data;
-
-        document.getElementById("title").value = data.title || '';
-        document.getElementById("location").value = data.location || '';
-        document.getElementById("focal_point").value = data.focal_point || '';
-        document.getElementById("seiNumber").value = data.seiNumber || '';
-      } catch (err) {
-        alert("Não foi possível carregar os dados da solicitação.");
-        console.error(err);
-      }
-    }
-
-    document.getElementById("editForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      // Só envia campos que foram alterados
-      const body = {};
-      const campos = ["title", "location", "focal_point", "seiNumber"];
-
-      campos.forEach(campo => {
-        const novoValor = document.getElementById(campo).value;
-        if (novoValor !== dadosOriginais[campo]) {
-          body[campo] = novoValor;
-        }
-      });
-
-      if (Object.keys(body).length === 0) {
-        alert("Nenhuma alteração detectada.");
-        return;
-      }
-
-      try {
-        const res = await fetch(`/api/solicitacoes/${id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(body)
-        });
-
-        if (!res.ok) throw new Error("Erro ao atualizar solicitação");
-
-        alert("Solicitação atualizada com sucesso!");
-        window.location.href = "monthly-dashboard.html";
-      } catch (err) {
-        alert("Erro ao salvar alterações.");
-        console.error(err);
-      }
-    });
-
-    carregarDados();
-  </script>
-
+  <!-- Script separado -->
+  <script type="module" src="editar-form.js"></script>
 </body>
 </html>
