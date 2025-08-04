@@ -8,59 +8,62 @@ document.addEventListener("DOMContentLoaded", () => {
     confirmationMessage.textContent = message;
     confirmationMessage.className = `confirmation-message ${type}`;
     confirmationMessage.classList.remove("hidden");
-    
-    // Auto-hide after 3 seconds
+
     setTimeout(() => {
       confirmationMessage.classList.add("hidden");
     }, 3000);
   };
 
-  actionForm.addEventListener("submit", (e) => {
+  if (!actionForm) {
+    console.error("Formulário #actionForm não encontrado no HTML.");
+    return;
+  }
+
+  actionForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Grab and trim input values
+    // Coleta dos valores
     const seiNumber = document.getElementById("seiNumber").value.trim();
     const sendDate = document.getElementById("sendDate").value;
     const subject = document.getElementById("subject").value.trim();
     const requester = document.getElementById("requester").value.trim();
     const location = document.getElementById("location").value.trim();
-    const focalPoint = document.getElementById("focalPoint").value.trim();
+    const focalPoint = document.getElementById("focalPoint").value.trim(); // não obrigatório
     const date = document.getElementById("date").value;
     const status = document.getElementById("status").value;
-    const seiRequest = document.getElementById("seiRequest").value.trim();
+    const seiRequest = document.getElementById("seiRequest").value.trim(); // não obrigatório
+    const monthRef = document.getElementById("monthRef").value;
 
-    // Validate mandatory fields
-    if (!seiNumber || !sendDate || !subject || !requester || !location || !focalPoint || !date || !status) {
-      showMessage("error", "Por favor, preencha todos os campos obrigatórios.");
+    // Validação obrigatórios
+    if (!seiNumber || !sendDate || !subject || !requester || !location || !date || !status || !monthRef) {
+      showMessage("error", "Preencha todos os campos obrigatórios.");
       return;
     }
 
-    // Map form data to the expected database keys (snake_case)
     const eventDataForDb = {
-      sei_number: seiNumber,
-      send_date: sendDate,
-      subject: subject,
-      requester: requester,
-      location: location,
-      focal_point: focalPoint,
-      date: date,
-      status: status,
-      sei_request: seiRequest
+      sei: seiNumber,
+      data_envio_gpac: sendDate,
+      assunto: subject,
+      solicitante: requester,
+      local: location,
+      ponto_focal: focalPoint || null,
+      data_evento: date,
+      situacao: status,
+      sei_diarias: seiRequest || null,
+      mes_referencia: monthRef
     };
 
-    eventAPI.createEvent(eventDataForDb)
-      .then(() => {
-        showMessage("success", "Evento cadastrado com sucesso na agenda!");
-        actionForm.reset();
-      })
-      .catch((error) => {
-        console.error("Submission error:", error);
-        showMessage("error", "Erro ao enviar formulário: " + error.message);
-      });
+    try {
+      await eventAPI.createEvent(eventDataForDb);
+      showMessage("success", "Solicitação cadastrada com sucesso!");
+      actionForm.reset();
+    } catch (error) {
+      console.error("Erro ao enviar:", error);
+      showMessage("error", "Erro ao enviar: " + error.message);
+    }
   });
 
   actionForm.addEventListener("reset", () => {
-    // Clear any validation states or confirmation messages
     confirmationMessage.classList.add("hidden");
   });
 });
