@@ -7,60 +7,78 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="action-form">
-
   <form id="editForm">
     <h2 class="form-title">Editar Ação</h2>
 
     <div class="form-group">
-      <label for="seiNumber">Número do SEI</label>
-      <input type="text" id="seiNumber" name="seiNumber" />
+      <label for="sei">Número do SEI</label>
+      <input type="text" id="sei" name="sei" />
     </div>
 
     <div class="form-group">
-      <label for="sendDate">Data de envio</label>
-      <input type="date" id="sendDate" name="sendDate" />
+      <label for="data_envio_gpac">Data de envio</label>
+      <input type="date" id="data_envio_gpac" name="data_envio_gpac" />
     </div>
 
     <div class="form-group">
-      <label for="subject">Assunto</label>
-      <input type="text" id="subject" name="subject" />
+      <label for="assunto">Assunto</label>
+      <input type="text" id="assunto" name="assunto" />
     </div>
 
     <div class="form-group">
-      <label for="requester">Solicitante</label>
-      <input type="text" id="requester" name="requester" />
+      <label for="solicitante">Solicitante</label>
+      <input type="text" id="solicitante" name="solicitante" />
     </div>
 
     <div class="form-group">
-      <label for="location">Local</label>
-      <input type="text" id="location" name="location" />
+      <label for="local">Local</label>
+      <input type="text" id="local" name="local" />
     </div>
 
     <div class="form-group">
-      <label for="focal_point">Ponto focal</label>
-      <input type="text" id="focal_point" name="focal_point" />
+      <label for="ponto_focal">Ponto focal</label>
+      <input type="text" id="ponto_focal" name="ponto_focal" />
     </div>
 
     <div class="form-group">
-      <label for="date">Data</label>
-      <input type="date" id="date" name="date" />
+      <label for="data_evento">Data do evento</label>
+      <input type="text" id="data_evento" name="data_evento" />
     </div>
 
     <div class="form-group">
-      <label for="status">Situação</label>
-      <select id="status" name="status">
+      <label for="situacao">Situação</label>
+      <select id="situacao" name="situacao">
         <option value="">Selecionar</option>
         <option value="SOLICITADO">SOLICITADO</option>
-        <option value="ARTICULADO">ARTICULADO</option>
-        <option value="REALIZADA">REALIZADA</option>
-        <option value="CANCELADO_PELO_SOLICITANTE">CANCELADO PELO SOLICITANTE</option>
         <option value="ATENDIDO">ATENDIDO</option>
+        <option value="ARTICULADO">ARTICULADO</option>
+        <option value="CANCELADO PELO SOLICITANTE">CANCELADO PELO SOLICITANTE</option>
+        <option value="REALIZADA">REALIZADA</option>
       </select>
     </div>
 
     <div class="form-group">
-      <label for="seiRequest">SEI de solicitação das diárias</label>
-      <input type="text" id="seiRequest" name="seiRequest" />
+      <label for="sei_diarias">SEI das diárias</label>
+      <input type="text" id="sei_diarias" name="sei_diarias" />
+    </div>
+
+    <div class="form-group">
+      <label for="mes_referencia">Mês de Referência</label>
+      <select id="mes_referencia" name="mes_referencia">
+        <option value="">Selecionar</option>
+        <option value="JAN25">JAN25</option>
+        <option value="FEV25">FEV25</option>
+        <option value="MAR25">MAR25</option>
+        <option value="ABR25">ABR25</option>
+        <option value="MAI25">MAI25</option>
+        <option value="JUN25">JUN25</option>
+        <option value="JUL25">JUL25</option>
+        <option value="AGO25">AGO25</option>
+        <option value="SET25">SET25</option>
+        <option value="OUT25">OUT25</option>
+        <option value="NOV25">NOV25</option>
+        <option value="DEZ25">DEZ25</option>
+      </select>
     </div>
 
     <div class="form-buttons">
@@ -69,7 +87,6 @@
     </div>
   </form>
 
-  <!-- Script separado -->
   <script type="module" src="editar-form.js"></script>
 </body>
 </html>

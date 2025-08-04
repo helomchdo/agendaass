@@ -16,22 +16,22 @@ async function carregarDados() {
     dadosOriginais = data;
 
     const campos = [
-      "seiNumber", "sendDate", "subject", "requester", "location",
-      "focal_point", "date", "status", "seiRequest"
+      "sei", "data_envio_gpac", "assunto", "solicitante", "local",
+      "ponto_focal", "data_evento", "situacao", "sei_diarias", "mes_referencia"
     ];
 
     campos.forEach(campo => {
       const el = document.getElementById(campo);
-      if (el) {
-        if (el.type === "date" && data[campo]) {
-          el.value = data[campo].split("T")[0];
-        } else {
-          el.value = data[campo] || '';
-        }
+      if (!el) return;
+
+      if (el.type === "date" && data[campo]) {
+        el.value = data[campo].split("T")[0];
+      } else {
+        el.value = data[campo] || '';
       }
     });
   } catch (err) {
-    alert("Não foi possível carregar os dados da solicitação.");
+    alert("Erro ao carregar os dados.");
     console.error(err);
   }
 }
@@ -40,8 +40,8 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const campos = [
-    "seiNumber", "sendDate", "subject", "requester", "location",
-    "focal_point", "date", "status", "seiRequest"
+    "sei", "data_envio_gpac", "assunto", "solicitante", "local",
+    "ponto_focal", "data_evento", "situacao", "sei_diarias", "mes_referencia"
   ];
 
   const body = {};
@@ -49,7 +49,6 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
   campos.forEach(campo => {
     const el = document.getElementById(campo);
     const novoValor = el.value;
-
     const valorOriginal = dadosOriginais[campo] || '';
     const comparado = el.type === "date"
       ? (valorOriginal?.split("T")[0] || '')
@@ -68,18 +67,16 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
   try {
     const res = await fetch(`/api/solicitacoes/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body)
     });
 
-    if (!res.ok) throw new Error("Erro ao atualizar solicitação");
+    if (!res.ok) throw new Error("Erro ao atualizar");
 
-    alert("Solicitação atualizada com sucesso!");
+    alert("Atualizado com sucesso!");
     window.location.href = "monthly-dashboard.html";
   } catch (err) {
-    alert("Erro ao salvar alterações.");
+    alert("Erro ao salvar.");
     console.error(err);
   }
 });
