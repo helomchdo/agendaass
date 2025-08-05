@@ -38,10 +38,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     </span>
                 </div>
                 <div class="event-details">
-                    <p><strong>Data:</strong> ${event.date || event.start || '-'}</p>
-                    <p><strong>Local:</strong> ${event.local || '-'}</p>
-                    <p><strong>Solicitante:</strong> ${event.solicitante || '-'}</p>
-                    <p><strong>Ponto Focal:</strong> ${event.ponto_focal || '-'}</p>
+                    <p><strong>SEI:</strong> ${event.sei || '-'}</p>
+  <p><strong>Assunto:</strong> ${event.assunto || '-'}</p>
+  <p><strong>Data:</strong> ${event.date || event.start || '-'}</p>
+  <p><strong>Local:</strong> ${event.local || '-'}</p>
+  <p><strong>Solicitante:</strong> ${event.solicitante || '-'}</p>
+  <p><strong>Ponto Focal:</strong> ${event.ponto_focal || '-'}</p>
+  <p><strong>Situação:</strong> ${event.situacao || '-'}</p>
                 </div>
             </div>
         `).join('');
