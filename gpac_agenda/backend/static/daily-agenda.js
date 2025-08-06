@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function fetchEvents() {
         try {
             events = await eventAPI.getAllEvents();
+            console.log("[DEBUG] Evento completo (1º):", events[0]);
             updateUI(currentDate);
         } catch (error) {
             console.error("Erro ao buscar eventos:", error);
