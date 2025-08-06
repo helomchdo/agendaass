@@ -23,33 +23,44 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderEvents(dayEvents) {
-    if (dayEvents.length === 0) {
-        noEventsContainer.style.display = "block";
-        eventsContainer.style.display = "none";
-    } else {
-        noEventsContainer.style.display = "none";
-        eventsContainer.style.display = "block";
-        eventsContainer.innerHTML = dayEvents.map(event => `
-            <div class="event-card">
-                <div class="event-header">
-                    <h3>${event.title || event.assunto || 'Sem título'}</h3>
-                    <span class="event-status ${event.situacao?.toLowerCase() || 'desconhecido'}">
-                        ${event.situacao || 'Sem status'}
-                    </span>
+        if (dayEvents.length === 0) {
+            noEventsContainer.style.display = "block";
+            eventsContainer.style.display = "none";
+        } else {
+            noEventsContainer.style.display = "none";
+            eventsContainer.style.display = "block";
+            eventsContainer.innerHTML = dayEvents.map((event, idx) => `
+                <div class="event-card">
+                    <div class="event-header">
+                        <h3>${event.title || event.assunto || 'Sem título'}</h3>
+                        <p><strong>Local:</strong> ${event.local || event.location || '-'}</p>
+                        <button class="btn-secondary toggle-details" data-idx="${idx}">
+                            Ver detalhes
+                        </button>
+                    </div>
+                    <div class="event-details" style="display: none;">
+                        <p><strong>SEI:</strong> ${event.sei || event.seiNumber || '-'}</p>
+                        <p><strong>Assunto:</strong> ${event.assunto || '-'}</p>
+                        <p><strong>Data:</strong> ${event.date || event.start || '-'}</p>
+                        <p><strong>Solicitante:</strong> ${event.solicitante || '-'}</p>
+                        <p><strong>Ponto Focal:</strong> ${event.ponto_focal || event.focal_point || '-'}</p>
+                        <p><strong>Situação:</strong> ${event.situacao || event.status || '-'}</p>
+                    </div>
                 </div>
-                <div class="event-details">
-                    <p><strong>SEI:</strong> ${event.sei || '-'}</p>
-  <p><strong>Assunto:</strong> ${event.assunto || '-'}</p>
-  <p><strong>Data:</strong> ${event.date || event.start || '-'}</p>
-  <p><strong>Local:</strong> ${event.local || '-'}</p>
-  <p><strong>Solicitante:</strong> ${event.solicitante || '-'}</p>
-  <p><strong>Ponto Focal:</strong> ${event.ponto_focal || '-'}</p>
-  <p><strong>Situação:</strong> ${event.situacao || '-'}</p>
-                </div>
-            </div>
-        `).join('');
+            `).join('');
+
+            // Adiciona evento aos botões de "Ver detalhes"
+            document.querySelectorAll(".toggle-details").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const card = btn.closest(".event-card");
+                    const details = card.querySelector(".event-details");
+                    const isVisible = details.style.display === "block";
+                    details.style.display = isVisible ? "none" : "block";
+                    btn.textContent = isVisible ? "Ver detalhes" : "Ocultar detalhes";
+                });
+            });
+        }
     }
-}
 
     async function fetchEvents() {
         try {
@@ -69,14 +80,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const dayEvents = events.filter(event => {
             const evDate = event.date || event.start;
-            console.log('Comparing event date:', evDate, 'with isoDate:', isoDate);
-            return evDate === isoDate;
+            if (!evDate) return false;
+            const normalizedEventDate = new Date(evDate).toISOString().split("T")[0];
+            return normalizedEventDate === isoDate;
         });
 
-        console.log('Filtered events for the day:', dayEvents);
-
         const isToday = date.toDateString() === new Date().toDateString();
-
         const formattedDate = formatDate(date);
         currentDateElem.textContent = `${formattedDate}${isToday ? ' (Hoje)' : ''}`;
         eventCountElem.textContent = `(${dayEvents.length} eventos)`;
