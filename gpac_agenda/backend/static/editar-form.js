@@ -81,4 +81,22 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
   }
 });
 
+document.getElementById("btnExcluir").addEventListener("click", async () => {
+  if (!confirm("Tem certeza que deseja excluir esta solicitação?")) return;
+
+  try {
+    const res = await fetch(`/api/solicitacoes/${id}`, {
+      method: "DELETE"
+    });
+
+    if (!res.ok) throw new Error("Erro ao excluir");
+
+    alert("Solicitação excluída com sucesso!");
+    window.location.href = "monthly-dashboard.html";
+  } catch (err) {
+    alert("Erro ao excluir a solicitação.");
+    console.error(err);
+  }
+});
+
 carregarDados();
