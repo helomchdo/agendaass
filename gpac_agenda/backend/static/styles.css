@@ -1329,5 +1329,32 @@ label {
 .error-message {
   color: red;
 }
+ .date-picker-container {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+#datePicker {
+  width: 100%;
+  max-width: 250px;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#datePicker:hover {
+  border-color: var(--primary-color);
+}
+
+#datePicker:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 56, 89, 0.1);
+}
 
 }
