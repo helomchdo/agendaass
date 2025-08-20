@@ -1,4 +1,6 @@
 import { eventAPI } from '../../services/api.js';
+import flatpickr from "https://cdn.jsdelivr.net/npm/flatpickr/dist/esm/index.js";
+import { Portuguese } from "https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js";
 
 console.log('Daily Agenda Script Loaded');
 
@@ -9,6 +11,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const eventCountElem = document.querySelector(".daily-title span");
     const noEventsContainer = document.querySelector(".no-events-container");
     const eventsContainer = document.querySelector(".events-container");
+const searchDateInput = document.getElementById("searchDate");
+
+
+flatpickr(datePicker, {
+    dateFormat: "Y-m-d",
+    defaultDate: new Date(),
+    locale: Portuguese,  // << aqui usamos o import correto
+    onChange: function(selectedDates) {
+        if (selectedDates.length > 0) {
+            currentDate = selectedDates[0];
+            updateUI(currentDate);
+        }
+    }
+});
+
 
     let currentDate = new Date();
     let events = [];
