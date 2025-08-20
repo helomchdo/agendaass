@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const noEventsContainer = document.querySelector(".no-events-container");
     const eventsContainer = document.querySelector(".events-container");
 const searchDateInput = document.getElementById("searchDate");
+const datePicker = document.getElementById("datePicker");
 
 
 flatpickr(datePicker, {
