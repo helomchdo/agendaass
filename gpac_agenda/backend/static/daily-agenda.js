@@ -1,6 +1,5 @@
 import { eventAPI } from '../../services/api.js';
-import flatpickr from "https://cdn.jsdelivr.net/npm/flatpickr/dist/esm/index.js";
-import { Portuguese } from "https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js";
+
 
 console.log('Daily Agenda Script Loaded');
 
@@ -17,7 +16,7 @@ const searchDateInput = document.getElementById("searchDate");
 flatpickr(datePicker, {
     dateFormat: "Y-m-d",
     defaultDate: new Date(),
-    locale: Portuguese,  // << aqui usamos o import correto
+    locale: "pt", // agora funciona, porque carregamos o arquivo pt.js
     onChange: function(selectedDates) {
         if (selectedDates.length > 0) {
             currentDate = selectedDates[0];
@@ -25,7 +24,6 @@ flatpickr(datePicker, {
         }
     }
 });
-
 
     let currentDate = new Date();
     let events = [];
