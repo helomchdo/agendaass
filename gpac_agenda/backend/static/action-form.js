@@ -12,6 +12,7 @@ form.addEventListener("submit", async (e) => {
   const ponto_focal = document.getElementById("focalPoint").value; // corrigido
   const data_evento = document.getElementById("date").value; // corrigido
   const situacao = document.getElementById("status").value; // corrigido
+  const hora = document.getElementById("time").value;
   const data_envio_gpac = new Date().toISOString();
 
   // Gera mes_referencia a partir da data_evento
@@ -35,6 +36,7 @@ form.addEventListener("submit", async (e) => {
     local,
     ponto_focal: ponto_focal || null,
     data_evento,
+    hora,
     situacao,
     sei_diarias: sei_diarias || null,
     mes_referencia
