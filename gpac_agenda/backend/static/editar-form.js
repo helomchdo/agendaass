@@ -17,7 +17,7 @@ async function carregarDados() {
 
     const campos = [
       "sei", "data_envio_gpac", "assunto", "solicitante", "local",
-      "ponto_focal", "data_evento", "situacao", "sei_diarias", "mes_referencia"
+      "ponto_focal", "data_evento", "hora", "situacao", "sei_diarias", "mes_referencia"
     ];
 
     campos.forEach(campo => {
@@ -26,6 +26,8 @@ async function carregarDados() {
 
       if (el.type === "date" && data[campo]) {
         el.value = data[campo].split("T")[0];
+      } else if (el.type === "time" && data[campo]) {
+        el.value = data[campo].substring(0, 5); // pega só HH:MM
       } else {
         el.value = data[campo] || '';
       }
@@ -41,7 +43,7 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
 
   const campos = [
     "sei", "data_envio_gpac", "assunto", "solicitante", "local",
-    "ponto_focal", "data_evento", "situacao", "sei_diarias", "mes_referencia"
+    "ponto_focal", "data_evento", "hora", "situacao", "sei_diarias", "mes_referencia"
   ];
 
   const body = {};
@@ -50,12 +52,20 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
     const el = document.getElementById(campo);
     const novoValor = el.value;
     const valorOriginal = dadosOriginais[campo] || '';
-    const comparado = el.type === "date"
-      ? (valorOriginal?.split("T")[0] || '')
-      : valorOriginal;
+
+    const comparado =
+      el.type === "date"
+        ? (valorOriginal?.split("T")[0] || '')
+        : el.type === "time"
+          ? (valorOriginal?.substring(0, 5) || '')
+          : valorOriginal;
 
     if (novoValor !== comparado) {
-      body[campo] = novoValor;
+      if (el.type === "time" && novoValor && novoValor.length === 5) {
+        body[campo] = `${novoValor}:00`; // envia HH:MM:SS
+      } else {
+        body[campo] = novoValor;
+      }
     }
   });
 
@@ -65,6 +75,7 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
   }
 
   try {
+    console.log("Body enviado no PUT:", body); // debug
     const res = await fetch(`/api/solicitacoes/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
