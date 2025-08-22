@@ -41,6 +41,79 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   calendar.render();
+// ───────── Dashboard Semanal ─────────
+function startOfWeek(date) { const d=new Date(date); const day=(d.getDay()+6)%7; d.setHours(0,0,0,0); d.setDate(d.getDate()-day); return d; }
+function endOfWeek(date) { const s=startOfWeek(date); const e=new Date(s); e.setDate(s.getDate()+6); e.setHours(23,59,59,999); return e; }
+function sameDay(a,b){ return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+function fmtDate(d){ return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function fmtWeekday(d){ return d.toLocaleDateString('pt-BR',{weekday:'long'});}
+function fmtTime(d){ if(!d) return ''; const hh=d.getHours(),mm=d.getMinutes(); return (hh+mm)!==0? d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';}
+
+let refDate = new Date();
+
+function renderWeek() {
+  const weekStart = startOfWeek(refDate);
+  const weekEnd = endOfWeek(refDate);
+  document.getElementById("weekRange").textContent =
+    `${weekStart.toLocaleDateString("pt-BR",{day:"2-digit"})}/${(weekStart.getMonth()+1).toString().padStart(2,"0")} - ${fmtDate(weekEnd)}`;
+
+  const container = document.getElementById("weekDays");
+  container.innerHTML = "";
+
+  const all = calendar.getEvents().map(ev => ({
+    id: ev.id,
+    title: ev.title,
+    start: ev.start,
+    end: ev.end || ev.start,
+    status: (ev.extendedProps.status || "").toLowerCase(),
+    location: ev.extendedProps.location || "",
+  }));
+
+  for(let i=0;i<7;i++){
+    const dayDate = new Date(weekStart); dayDate.setDate(weekStart.getDate()+i);
+    const dayBox = document.createElement("div");
+    dayBox.className = "week-day";
+
+    const todays = all.filter(ev=>{
+      const st=new Date(ev.start); st.setHours(0,0,0,0);
+      const en=new Date(ev.end); en.setHours(23,59,59,999);
+      const d0=new Date(dayDate); d0.setHours(12,0,0,0);
+      return d0>=st && d0<=en;
+    }).sort((a,b)=>a.start-b.start);
+
+    // Cabeçalho
+    const head=document.createElement("div"); head.className="day-head";
+    head.innerHTML = `<span>${fmtWeekday(dayDate)}</span><span>${dayDate.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}${sameDay(dayDate,new Date())? ' <span class="today">Hoje</span>': ''}</span>`;
+
+    const body=document.createElement("div"); body.className="day-body";
+
+    if(todays.length===0){
+      const empty=document.createElement("div"); empty.className="week-empty"; empty.textContent="Nenhum evento.";
+      body.appendChild(empty);
+    } else {
+      todays.forEach(ev=>{
+        const chip=document.createElement("button");
+        chip.className=`event-chip ${ev.status? 'status-'+ev.status:''}`;
+        chip.innerHTML=`<span class="status-dot"></span><span class="time">${fmtTime(ev.start)||'—'}</span><span class="title">${ev.title}</span>${ev.location? `<span class="place">• ${ev.location}</span>`:''}`;
+        chip.addEventListener("click",()=>{
+          calendar.gotoDate(dayDate);
+          const fce=calendar.getEventById(ev.id);
+          if(fce) fce.setProp("backgroundColor","#2563eb");
+        });
+        body.appendChild(chip);
+      });
+    }
+
+    dayBox.appendChild(head);
+    dayBox.appendChild(body);
+    container.appendChild(dayBox);
+  }
+}
+
+document.getElementById("weekPrev").addEventListener("click",()=>{refDate.setDate(refDate.getDate()-7);renderWeek();});
+document.getElementById("weekNext").addEventListener("click",()=>{refDate.setDate(refDate.getDate()+7);renderWeek();});
+
+renderWeek();
 
   document.querySelector(".modal .close").addEventListener("click", () => {
   document.getElementById("eventModal").style.display = "none";

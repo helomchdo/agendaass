@@ -1356,5 +1356,62 @@ label {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(0, 56, 89, 0.1);
 }
+ /* ───────── Dashboard Semanal ───────── */
+.weekly-card { margin-bottom: 1rem; }
+
+.week-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: .75rem;
+}
+
+.weekly-title {
+  display: flex; align-items: center; gap: .5rem;
+  font-size: 1.125rem; font-weight: 600; color: var(--primary-color);
+}
+
+.week-nav { display: flex; align-items: center; gap: .5rem; }
+.week-range { font-weight: 500; opacity: .85; }
+
+.week-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: .75rem;
+}
+
+.week-day {
+  border: 1px solid var(--border);
+  border-radius: .75rem;
+  background: var(--white);
+  padding: .75rem;
+  display: flex; flex-direction: column; gap: .5rem;
+}
+
+.day-head { display: flex; justify-content: space-between; font-size: .875rem; font-weight: 600; }
+.day-head .today { background: var(--background); color: var(--primary-color); padding: .125rem .5rem; border-radius: 1rem; font-size: .75rem; }
+
+.day-body { display: flex; flex-direction: column; gap: .375rem; }
+.event-chip {
+  display: flex; align-items: center; gap: .375rem;
+  border: 1px solid var(--border);
+  border-radius: .5rem; padding: .375rem .5rem;
+  font-size: .8125rem; background: var(--white);
+  cursor: pointer; transition: .15s ease;
+}
+.event-chip:hover { background: var(--background); }
+.event-chip .status-dot { width: .5rem; height: .5rem; border-radius: 50%; }
+.event-chip.status-aprovado .status-dot { background: #22C55E; }
+.event-chip.status-pendente .status-dot { background: #FFA500; }
+.event-chip.status-rejeitado .status-dot { background: #EF4444; }
+
+.week-empty { font-size: .8125rem; opacity: .6; }
+
+/* Responsivo: vira carrossel no mobile */
+@media (max-width: 900px) {
+  .week-grid {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(240px, 1fr);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  .week-day { scroll-snap-align: start; }
+}
 
 }
