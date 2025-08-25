@@ -91,18 +91,41 @@ function renderWeek() {
       const empty=document.createElement("div"); empty.className="week-empty"; empty.textContent="Nenhum evento.";
       body.appendChild(empty);
     } else {
-      todays.forEach(ev=>{
-        const chip=document.createElement("button");
-        chip.className=`event-chip ${ev.status? 'status-'+ev.status:''}`;
-        chip.innerHTML=`<span class="status-dot"></span><span class="time">${fmtTime(ev.start)||'—'}</span><span class="title">${ev.title}</span>${ev.location? `<span class="place">• ${ev.location}</span>`:''}`;
-        chip.addEventListener("click",()=>{
-          calendar.gotoDate(dayDate);
-          const fce=calendar.getEventById(ev.id);
-          if(fce) fce.setProp("backgroundColor","#2563eb");
-        });
-        body.appendChild(chip);
-      });
+      todays.forEach(ev => {
+  const card = document.createElement("div");
+  card.className = "event-card";
+
+  card.innerHTML = `
+    <h4 class="event-title">${ev.title}</h4>
+    <p class="event-location"><strong>Local:</strong> ${ev.location || 'N/A'}</p>
+    <button class="btn-secondary view-more">Ver detalhes</button>
+  `;
+
+  card.querySelector(".view-more").addEventListener("click", () => {
+    calendar.gotoDate(dayDate);
+    const fce = calendar.getEventById(ev.id);
+    if (fce) {
+      const event = fce;
+      const detailsHTML = `
+        <h3>${event.title}</h3>
+        <p><strong>Data:</strong> ${event.start.toLocaleDateString()}</p>
+        <p><strong>Local:</strong> ${event.extendedProps.location || 'N/A'}</p>
+        <p><strong>Responsável:</strong> ${event.extendedProps.focal_point || 'N/A'}</p>
+        <p><strong>SEI:</strong> ${event.extendedProps.sei || 'N/A'}</p>
+        <button class="btn-primary" id="editEventBtn">Editar</button>
+      `;
+      document.getElementById("eventDetails").innerHTML = detailsHTML;
+      document.getElementById("eventModal").style.display = "block";
+      document.getElementById("editEventBtn").onclick = () => {
+        window.location.href = `/editar.html?id=${event.id}`;
+      };
     }
+  });
+
+  body.appendChild(card);
+});
+
+} 
 
     dayBox.appendChild(head);
     dayBox.appendChild(body);
