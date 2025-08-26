@@ -87,9 +87,9 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
     alert("Atualizado com sucesso!");
     window.location.href = "monthly-dashboard.html";
   } catch (err) {
-    alert("Erro ao salvar.");
-    console.error(err);
-  }
+  alert("Erro ao salvar.");
+  console.error("Detalhes do erro:", err.message);
+}
 });
 
 document.getElementById("btnExcluir").addEventListener("click", async () => {
