@@ -91,9 +91,7 @@ function renderWeek() {
     if (todays.length === 0) {
       cell.innerHTML = `<span class="week-empty">Nenhum evento</span>`;
     } else {
-      if (todays.length === 0) {
-  cell.innerHTML = `<span class="week-empty">Nenhum evento</span>`;
-} else {
+      
   todays.forEach(ev => {
     const chip = document.createElement("div");
     chip.className = `event-chip status-${ev.status}`;
@@ -129,7 +127,7 @@ function renderWeek() {
     }
     tbody.appendChild(tr);
   }
-}
+;
 
 document.getElementById("weekPrev").addEventListener("click",()=>{refDate.setDate(refDate.getDate()-7);renderWeek();});
 document.getElementById("weekNext").addEventListener("click",()=>{refDate.setDate(refDate.getDate()+7);renderWeek();});
