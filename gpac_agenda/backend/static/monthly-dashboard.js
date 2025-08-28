@@ -57,8 +57,8 @@ function renderWeek() {
   document.getElementById("weekRange").textContent =
     `${weekStart.toLocaleDateString("pt-BR",{day:"2-digit"})}/${(weekStart.getMonth()+1).toString().padStart(2,"0")} - ${fmtDate(weekEnd)}`;
 
-  const container = document.getElementById("weekDays");
-  container.innerHTML = "";
+  const tbody = document.getElementById("weekTableBody");
+  tbody.innerHTML = "";
 
   const all = calendar.getEvents().map(ev => ({
     id: ev.id,
@@ -69,10 +69,8 @@ function renderWeek() {
     location: ev.extendedProps.location || "",
   }));
 
-  for(let i=0;i<7;i++){
+  for (let i = 0; i < 7; i++) {
     const dayDate = new Date(weekStart); dayDate.setDate(weekStart.getDate()+i);
-    const dayBox = document.createElement("div");
-    dayBox.className = "week-day";
 
     const todays = all.filter(ev=>{
       const st=new Date(ev.start); st.setHours(0,0,0,0);
@@ -81,62 +79,56 @@ function renderWeek() {
       return d0>=st && d0<=en;
     }).sort((a,b)=>a.start-b.start);
 
-    // Cabeçalho
-    const head=document.createElement("div"); head.className="day-head";
-    head.innerHTML = `<span>${fmtWeekday(dayDate)}</span><span>${dayDate.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}${sameDay(dayDate,new Date())? ' <span class="today">Hoje</span>': ''}</span>`;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${fmtWeekday(dayDate)}</td>
+      <td>${dayDate.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}${sameDay(dayDate,new Date())? ' <span class="today">Hoje</span>': ''}</td>
+      <td class="events-cell"></td>
+    `;
 
-    const body=document.createElement("div"); body.className="day-body";
+    const cell = tr.querySelector(".events-cell");
 
-    if(todays.length===0){
-      const empty=document.createElement("div"); empty.className="week-empty"; empty.textContent="Nenhum evento.";
-      body.appendChild(empty);
+    if (todays.length === 0) {
+      cell.innerHTML = `<span class="week-empty">Nenhum evento</span>`;
     } else {
-      todays.forEach(ev => {
-  const card = document.createElement("div");
-  card.className = "event-card";
-
-  card.innerHTML = `
-    <h4 class="event-title">${ev.title}</h4>
-    <p class="event-location"><strong>Local:</strong> ${ev.location || 'N/A'}</p>
-    <button class="btn-secondary view-more">Ver detalhes</button>
-  `;
-
-  card.querySelector(".view-more").addEventListener("click", () => {
-    calendar.gotoDate(dayDate);
-    const fce = calendar.getEventById(ev.id);
-    if (fce) {
-      const event = fce;
-      const detailsHTML = `
-        <h3>${event.title}</h3>
-        <p><strong>Data:</strong> ${event.start.toLocaleDateString()}</p>
-        <p><strong>Local:</strong> ${event.extendedProps.location || 'N/A'}</p>
-        <p><strong>Responsável:</strong> ${event.extendedProps.focal_point || 'N/A'}</p>
-        <p><strong>SEI:</strong> ${event.extendedProps.sei || 'N/A'}</p>
-        <button class="btn-primary" id="editEventBtn">Editar</button>
-      `;
-      document.getElementById("eventDetails").innerHTML = detailsHTML;
-      document.getElementById("eventModal").style.display = "block";
-      document.getElementById("editEventBtn").onclick = () => {
-        window.location.href = `/editar.html?id=${event.id}`;
-      };
+      todays.forEach(ev=>{
+        const chip = document.createElement("div");
+        chip.className = `event-chip status-${ev.status}`;
+        chip.innerHTML = `
+          <span class="status-dot"></span>
+          <span>${ev.title}</span>
+          <button class="view-more">Ver mais</button>
+        `;
+        chip.querySelector(".view-more").addEventListener("click",()=>{
+          const fce = calendar.getEventById(ev.id);
+          if (fce) {
+            const event = fce;
+            const detailsHTML = `
+              <h3>${event.title}</h3>
+              <p><strong>Data:</strong> ${event.start.toLocaleDateString()}</p>
+              <p><strong>Local:</strong> ${event.extendedProps.location || 'N/A'}</p>
+              <p><strong>Responsável:</strong> ${event.extendedProps.focal_point || 'N/A'}</p>
+              <p><strong>SEI:</strong> ${event.extendedProps.sei || 'N/A'}</p>
+              <button class="btn-primary" id="editEventBtn">Editar</button>
+            `;
+            document.getElementById("eventDetails").innerHTML = detailsHTML;
+            document.getElementById("eventModal").style.display = "block";
+            document.getElementById("editEventBtn").onclick = () => {
+              window.location.href = `/editar.html?id=${event.id}`;
+            };
+          }
+        });
+        cell.appendChild(chip);
+      });
     }
-  });
-
-  body.appendChild(card);
-});
-
-} 
-
-    dayBox.appendChild(head);
-    dayBox.appendChild(body);
-    container.appendChild(dayBox);
+    tbody.appendChild(tr);
   }
 }
 
 document.getElementById("weekPrev").addEventListener("click",()=>{refDate.setDate(refDate.getDate()-7);renderWeek();});
 document.getElementById("weekNext").addEventListener("click",()=>{refDate.setDate(refDate.getDate()+7);renderWeek();});
 
-renderWeek();
+
 
   document.querySelector(".modal .close").addEventListener("click", () => {
   document.getElementById("eventModal").style.display = "none";
@@ -162,4 +154,6 @@ renderWeek();
   } catch (err) {
     console.error('[Monthly] Falha ao carregar eventos:', err);
   }
+
+  renderWeek();
 });
