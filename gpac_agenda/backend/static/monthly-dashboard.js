@@ -91,35 +91,41 @@ function renderWeek() {
     if (todays.length === 0) {
       cell.innerHTML = `<span class="week-empty">Nenhum evento</span>`;
     } else {
-      todays.forEach(ev=>{
-        const chip = document.createElement("div");
-        chip.className = `event-chip status-${ev.status}`;
-        chip.innerHTML = `
-          <span class="status-dot"></span>
-          <span>${ev.title}</span>
-          <button class="view-more">Ver mais</button>
+      if (todays.length === 0) {
+  cell.innerHTML = `<span class="week-empty">Nenhum evento</span>`;
+} else {
+  todays.forEach(ev => {
+    const chip = document.createElement("div");
+    chip.className = `event-chip status-${ev.status}`;
+    chip.innerHTML = `
+      <div class="event-info">
+        <span class="event-title">${ev.title}</span>
+      </div>
+      <button class="view-more">Ver mais</button>
+    `;
+    chip.querySelector(".view-more").addEventListener("click", () => {
+      const fce = calendar.getEventById(ev.id);
+      if (fce) {
+        const event = fce;
+        const detailsHTML = `
+          <h3>${event.title}</h3>
+          <p><strong>Data:</strong> ${event.start.toLocaleDateString()}</p>
+          <p><strong>Local:</strong> ${event.extendedProps.location || 'N/A'}</p>
+          <p><strong>Responsável:</strong> ${event.extendedProps.focal_point || 'N/A'}</p>
+          <p><strong>SEI:</strong> ${event.extendedProps.sei || 'N/A'}</p>
+          <button class="btn-primary" id="editEventBtn">Editar</button>
         `;
-        chip.querySelector(".view-more").addEventListener("click",()=>{
-          const fce = calendar.getEventById(ev.id);
-          if (fce) {
-            const event = fce;
-            const detailsHTML = `
-              <h3>${event.title}</h3>
-              <p><strong>Data:</strong> ${event.start.toLocaleDateString()}</p>
-              <p><strong>Local:</strong> ${event.extendedProps.location || 'N/A'}</p>
-              <p><strong>Responsável:</strong> ${event.extendedProps.focal_point || 'N/A'}</p>
-              <p><strong>SEI:</strong> ${event.extendedProps.sei || 'N/A'}</p>
-              <button class="btn-primary" id="editEventBtn">Editar</button>
-            `;
-            document.getElementById("eventDetails").innerHTML = detailsHTML;
-            document.getElementById("eventModal").style.display = "block";
-            document.getElementById("editEventBtn").onclick = () => {
-              window.location.href = `/editar.html?id=${event.id}`;
-            };
-          }
-        });
-        cell.appendChild(chip);
-      });
+        document.getElementById("eventDetails").innerHTML = detailsHTML;
+        document.getElementById("eventModal").style.display = "block";
+        document.getElementById("editEventBtn").onclick = () => {
+          window.location.href = `/editar.html?id=${event.id}`;
+        };
+      }
+    });
+    cell.appendChild(chip);
+  });
+}
+
     }
     tbody.appendChild(tr);
   }
