@@ -17,24 +17,17 @@
 
   <main class="container">
     <div class="card">
-      <section id="weekly-dashboard" class="card weekly-card" aria-live="polite">
-  <div class="week-header">
-    <h2 class="weekly-title">
-      <i class="fas fa-calendar-week"></i> Eventos da Semana
-    </h2>
-    <div class="week-nav">
-      <button class="btn-icon" id="weekPrev" aria-label="Semana anterior">
-        <i class="fas fa-chevron-left"></i>
-      </button>
-      <span id="weekRange" class="week-range">–</span>
-      <button class="btn-icon" id="weekNext" aria-label="Próxima semana">
-        <i class="fas fa-chevron-right"></i>
-      </button>
+      <section id="weekly-dashboard" class="weekly-section">
+  <div class="weekly-header">
+    <h2><i class="fas fa-calendar-week"></i> Agenda Semanal</h2>
+    <div class="week-controls">
+      <button id="weekPrev" aria-label="Semana anterior"><i class="fas fa-chevron-left"></i></button>
+      <span id="weekRange"></span>
+      <button id="weekNext" aria-label="Próxima semana"><i class="fas fa-chevron-right"></i></button>
     </div>
   </div>
-
-  <div id="weekTableWrapper">
-  <table class="week-table">
+</div>
+  <table class="weekly-table">
     <thead>
       <tr>
         <th>Dia</th>
@@ -42,15 +35,10 @@
         <th>Eventos</th>
       </tr>
     </thead>
-    <tbody id="weekTableBody"></tbody>
+    <tbody id="weeklyBody"></tbody>
   </table>
-</div>
 </section>
-      <div class="monthly-header">
-        <h1 class="monthly-title">
-          <i class="fas fa-calendar-alt"></i> Dashboard Mensal
-        </h1>
-      </div>
+
 
       <div id="calendar"></div>
 

@@ -41,103 +41,109 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   calendar.render();
-// ───────── Dashboard Semanal ─────────
-function startOfWeek(date) { const d=new Date(date); const day=(d.getDay()+6)%7; d.setHours(0,0,0,0); d.setDate(d.getDate()-day); return d; }
-function endOfWeek(date) { const s=startOfWeek(date); const e=new Date(s); e.setDate(s.getDate()+6); e.setHours(23,59,59,999); return e; }
-function sameDay(a,b){ return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
-function fmtDate(d){ return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});}
-function fmtWeekday(d){ return d.toLocaleDateString('pt-BR',{weekday:'long'});}
-function fmtTime(d){ if(!d) return ''; const hh=d.getHours(),mm=d.getMinutes(); return (hh+mm)!==0? d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';}
-
 let refDate = new Date();
 
-function renderWeek() {
-  const weekStart = startOfWeek(refDate);
-  const weekEnd = endOfWeek(refDate);
-  document.getElementById("weekRange").textContent =
-    `${weekStart.toLocaleDateString("pt-BR",{day:"2-digit"})}/${(weekStart.getMonth()+1).toString().padStart(2,"0")} - ${fmtDate(weekEnd)}`;
+  const weekRangeEl = document.getElementById("weekRange");
+  const weeklyBody = document.getElementById("weeklyBody");
 
-  const tbody = document.getElementById("weekTableBody");
-  tbody.innerHTML = "";
-
-  const all = calendar.getEvents().map(ev => ({
-    id: ev.id,
-    title: ev.title,
-    start: ev.start,
-    end: ev.end || ev.start,
-    status: (ev.extendedProps.status || "").toLowerCase(),
-    location: ev.extendedProps.location || "",
-  }));
-
-  for (let i = 0; i < 7; i++) {
-    const dayDate = new Date(weekStart); dayDate.setDate(weekStart.getDate()+i);
-
-    const todays = all.filter(ev=>{
-      const st=new Date(ev.start); st.setHours(0,0,0,0);
-      const en=new Date(ev.end); en.setHours(23,59,59,999);
-      const d0=new Date(dayDate); d0.setHours(12,0,0,0);
-      return d0>=st && d0<=en;
-    }).sort((a,b)=>a.start-b.start);
-
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${fmtWeekday(dayDate)}</td>
-      <td>${dayDate.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}${sameDay(dayDate,new Date())? ' <span class="today">Hoje</span>': ''}</td>
-      <td class="events-cell"></td>
-    `;
-
-    const cell = tr.querySelector(".events-cell");
-
-    if (todays.length === 0) {
-      cell.innerHTML = `<span class="week-empty">Nenhum evento</span>`;
-    } else {
-      
-  todays.forEach(ev => {
-    const chip = document.createElement("div");
-    chip.className = `event-chip status-${ev.status}`;
-    chip.innerHTML = `
-      <div class="event-info">
-        <span class="event-title">${ev.title}</span>
-      </div>
-      <button class="view-more">Ver mais</button>
-    `;
-    chip.querySelector(".view-more").addEventListener("click", () => {
-      const fce = calendar.getEventById(ev.id);
-      if (fce) {
-        const event = fce;
-        const detailsHTML = `
-          <h3>${event.title}</h3>
-          <p><strong>Data:</strong> ${event.start.toLocaleDateString()}</p>
-          <p><strong>Local:</strong> ${event.extendedProps.location || 'N/A'}</p>
-          <p><strong>Responsável:</strong> ${event.extendedProps.focal_point || 'N/A'}</p>
-          <p><strong>SEI:</strong> ${event.extendedProps.sei || 'N/A'}</p>
-          <button class="btn-primary" id="editEventBtn">Editar</button>
-        `;
-        document.getElementById("eventDetails").innerHTML = detailsHTML;
-        document.getElementById("eventModal").style.display = "block";
-        document.getElementById("editEventBtn").onclick = () => {
-          window.location.href = `/editar.html?id=${event.id}`;
-        };
-      }
-    });
-    cell.appendChild(chip);
-  });
-}
-
-    }
-    tbody.appendChild(tr);
+  function startOfWeek(date) {
+    const d = new Date(date);
+    const day = (d.getDay() + 6) % 7; // segunda-feira como início
+    d.setDate(d.getDate() - day);
+    d.setHours(0, 0, 0, 0);
+    return d;
   }
-;
 
-document.getElementById("weekPrev").addEventListener("click",()=>{refDate.setDate(refDate.getDate()-7);renderWeek();});
-document.getElementById("weekNext").addEventListener("click",()=>{refDate.setDate(refDate.getDate()+7);renderWeek();});
+  function endOfWeek(date) {
+    const d = startOfWeek(date);
+    const e = new Date(d);
+    e.setDate(d.getDate() + 6);
+    e.setHours(23, 59, 59, 999);
+    return e;
+  }
 
+  function formatDate(d) {
+    return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+  }
 
+  function formatWeekday(d) {
+    return d.toLocaleDateString("pt-BR", { weekday: "long" });
+  }
 
-  document.querySelector(".modal .close").addEventListener("click", () => {
-  document.getElementById("eventModal").style.display = "none";
-});
+  function sameDay(a, b) {
+    return a.getFullYear() === b.getFullYear()
+      && a.getMonth() === b.getMonth()
+      && a.getDate() === b.getDate();
+  }
 
+  let allEvents = [];
+
+  async function loadEvents() {
+    try {
+      const res = await fetch("/api/solicitacoes");
+      if (!res.ok) throw new Error("Falha ao carregar eventos");
+      const data = await res.json();
+
+      // Normaliza os eventos vindos do backend
+      allEvents = data.map(ev => ({
+        id: ev.id,
+        title: ev.titulo || ev.title || "Sem título",
+        date: new Date(ev.data_evento || ev.start || ev.data_envio_gpac),
+        location: ev.local || ev.location || "",
+        status: ev.situacao || ev.status || ""
+      }));
+
+      renderWeek();
+    } catch (err) {
+      console.error("[Weekly] Erro ao buscar eventos:", err);
+      weeklyBody.innerHTML = `<tr><td colspan="3">Erro ao carregar eventos</td></tr>`;
+    }
+  }
+
+  function renderWeek() {
+    const weekStart = startOfWeek(refDate);
+    const weekEnd = endOfWeek(refDate);
+
+    weekRangeEl.textContent = `${formatDate(weekStart)} - ${weekEnd.toLocaleDateString("pt-BR")}`;
+    weeklyBody.innerHTML = "";
+
+    for (let i = 0; i < 7; i++) {
+      const dayDate = new Date(weekStart);
+      dayDate.setDate(weekStart.getDate() + i);
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><strong>${formatWeekday(dayDate)}</strong></td>
+        <td>
+          ${formatDate(dayDate)}
+          ${sameDay(dayDate, new Date()) ? '<span class="today-badge">Hoje</span>' : ""}
+        </td>
+        <td class="events-cell"></td>
+      `;
+
+      const eventsForDay = allEvents.filter(ev => sameDay(new Date(ev.date), dayDate));
+
+      const cell = tr.querySelector(".events-cell");
+      if (eventsForDay.length === 0) {
+        cell.innerHTML = `<em style="opacity:.6">Nenhum evento</em>`;
+      } else {
+        eventsForDay.forEach(ev => {
+          const div = document.createElement("div");
+          div.className = "event-item";
+          div.innerHTML = `
+            <span>${ev.title}</span>
+            <button data-id="${ev.id}">Ver</button>
+          `;
+          div.querySelector("button").addEventListener("click", () => {
+            alert(`Evento: ${ev.title}\nData: ${ev.date.toLocaleDateString("pt-BR")}\nLocal: ${ev.location || "N/A"}\nStatus: ${ev.status}`);
+          });
+          cell.appendChild(div);
+        });
+      }
+
+      weeklyBody.appendChild(tr);
+    }
+  }
 
   try {
     const eventos = await eventAPI.getAllEvents();
@@ -159,5 +165,5 @@ document.getElementById("weekNext").addEventListener("click",()=>{refDate.setDat
     console.error('[Monthly] Falha ao carregar eventos:', err);
   }
 
-  renderWeek();
+ 
 });
