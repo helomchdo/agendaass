@@ -93,56 +93,7 @@ let refDate = new Date();
         status: ev.situacao || ev.status || ""
       }));
 
-      renderWeek();
-    } catch (err) {
-      console.error("[Weekly] Erro ao buscar eventos:", err);
-      weeklyBody.innerHTML = `<tr><td colspan="3">Erro ao carregar eventos</td></tr>`;
-    }
-  }
-
-  function renderWeek() {
-    const weekStart = startOfWeek(refDate);
-    const weekEnd = endOfWeek(refDate);
-
-    weekRangeEl.textContent = `${formatDate(weekStart)} - ${weekEnd.toLocaleDateString("pt-BR")}`;
-    weeklyBody.innerHTML = "";
-
-    for (let i = 0; i < 7; i++) {
-      const dayDate = new Date(weekStart);
-      dayDate.setDate(weekStart.getDate() + i);
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><strong>${formatWeekday(dayDate)}</strong></td>
-        <td>
-          ${formatDate(dayDate)}
-          ${sameDay(dayDate, new Date()) ? '<span class="today-badge">Hoje</span>' : ""}
-        </td>
-        <td class="events-cell"></td>
-      `;
-
-      const eventsForDay = allEvents.filter(ev => sameDay(new Date(ev.date), dayDate));
-
-      const cell = tr.querySelector(".events-cell");
-      if (eventsForDay.length === 0) {
-        cell.innerHTML = `<em style="opacity:.6">Nenhum evento</em>`;
-      } else {
-        eventsForDay.forEach(ev => {
-          const div = document.createElement("div");
-          div.className = "event-item";
-          div.innerHTML = `
-            <span>${ev.title}</span>
-            <button data-id="${ev.id}">Ver</button>
-          `;
-          div.querySelector("button").addEventListener("click", () => {
-            alert(`Evento: ${ev.title}\nData: ${ev.date.toLocaleDateString("pt-BR")}\nLocal: ${ev.location || "N/A"}\nStatus: ${ev.status}`);
-          });
-          cell.appendChild(div);
-        });
-      }
-
-      weeklyBody.appendChild(tr);
-    }
+     
   }
 
   try {
