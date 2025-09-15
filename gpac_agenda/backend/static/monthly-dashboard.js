@@ -42,28 +42,34 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   calendar.render();
 
+  // Carregar eventos e mapear campos
+  let eventosSemana = [];
   try {
     const eventos = await eventAPI.getAllEvents();
     console.log('[Monthly] Eventos recebidos:', eventos);
 
-    calendar.addEventSource(eventos.map(ev => ({
+    // Mapeamento dos campos do backend para o formato esperado
+    const eventosMapeados = eventos.map(ev => ({
       id: ev.id,
-      title: ev.title,
-      start: ev.start,
-      end: ev.end,
+      title: ev.titulo || ev.title || "Sem título",
+      start: ev.data_envio_gpac || ev.start, // ajuste conforme seu backend
+      end: ev.data_fim || ev.end || ev.data_envio_gpac || ev.start,
       extendedProps: {
-        status: ev.status,
-        sei: ev.seiNumber,
-        location: ev.location,
-        focal_point: ev.focal_point
+        status: ev.situacao || ev.status,
+        sei: ev.seiNumber || ev.sei,
+        location: ev.local || ev.location,
+        focal_point: ev.focal_point || ev.responsavel
       }
-    })));
+    }));
+
+    calendar.addEventSource(eventosMapeados);
+
+    eventosSemana = eventosMapeados;
   } catch (err) {
     console.error('[Monthly] Falha ao carregar eventos:', err);
   }
 
   // === Weekly Agenda ===
-  let eventosSemana = [];
   let currentWeekStart = new Date();
 
   function getWeekRange(date) {
@@ -88,6 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       day.setDate(start.getDate() + i);
 
       const dayEvents = eventosSemana.filter(ev => {
+        if (!ev.start) return false;
         const evDate = new Date(ev.start);
         return evDate.toDateString() === day.toDateString();
       });
@@ -127,10 +134,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
   }
 
-  try {
-    eventosSemana = await eventAPI.getAllEvents();
-    renderWeeklyView();
-  } catch (err) {
-    console.error("[Weekly] Falha ao carregar eventos:", err);
-  }
+  // Renderizar a visão semanal após carregar os eventos
+  renderWeeklyView();
 });
