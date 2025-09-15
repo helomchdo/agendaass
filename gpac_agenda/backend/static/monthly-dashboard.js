@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch (err) {
     console.error('[Monthly] Falha ao carregar eventos:', err);
   }
-  // ===== Weekly View independente =====
+  // ===== Weekly Agenda =====
 let eventosSemana = [];
 let currentWeekStart = new Date();
 
@@ -75,6 +75,7 @@ function getWeekRange(date) {
 function renderWeeklyView() {
   const { start, end } = getWeekRange(currentWeekStart);
   const tbody = document.getElementById("weeklyTableBody");
+  if (!tbody) return; // segurança
   tbody.innerHTML = "";
 
   document.getElementById("weekRangeLabel").textContent =
@@ -100,7 +101,7 @@ function renderWeeklyView() {
 
     tbody.innerHTML += `
       <tr>
-        <td>${day.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric" })} 
+        <td>${day.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric" })}
           ${new Date().toDateString() === day.toDateString() ? '<span class="today-badge">Hoje</span>' : ''}
         </td>
         <td>${eventsHTML}</td>
@@ -108,19 +109,25 @@ function renderWeeklyView() {
   }
 }
 
-// Navegação
 document.addEventListener("DOMContentLoaded", async () => {
-  document.getElementById("prevWeek").onclick = () => {
-    currentWeekStart.setDate(currentWeekStart.getDate() - 7);
-    renderWeeklyView();
-  };
+  // Botões de navegação semanal
+  const prevBtn = document.getElementById("prevWeek");
+  const nextBtn = document.getElementById("nextWeek");
 
-  document.getElementById("nextWeek").onclick = () => {
-    currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-    renderWeeklyView();
-  };
+  if (prevBtn && nextBtn) {
+    prevBtn.onclick = () => {
+      currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+      renderWeeklyView();
+    };
+
+    nextBtn.onclick = () => {
+      currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+      renderWeeklyView();
+    };
+  }
 
   try {
+    // pega os eventos da mesma API do mensal
     eventosSemana = await eventAPI.getAllEvents();
     renderWeeklyView();
   } catch (err) {
