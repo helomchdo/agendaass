@@ -60,4 +60,72 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch (err) {
     console.error('[Monthly] Falha ao carregar eventos:', err);
   }
+  // ===== Weekly View independente =====
+let eventosSemana = [];
+let currentWeekStart = new Date();
+
+function getWeekRange(date) {
+  const start = new Date(date);
+  start.setDate(start.getDate() - start.getDay()); // domingo
+  const end = new Date(start);
+  end.setDate(end.getDate() + 6); // sábado
+  return { start, end };
+}
+
+function renderWeeklyView() {
+  const { start, end } = getWeekRange(currentWeekStart);
+  const tbody = document.getElementById("weeklyTableBody");
+  tbody.innerHTML = "";
+
+  document.getElementById("weekRangeLabel").textContent =
+    `${start.toLocaleDateString("pt-BR")} - ${end.toLocaleDateString("pt-BR")}`;
+
+  for (let i = 0; i < 7; i++) {
+    const day = new Date(start);
+    day.setDate(start.getDate() + i);
+
+    const dayEvents = eventosSemana.filter(ev => {
+      const evDate = new Date(ev.start);
+      return evDate.toDateString() === day.toDateString();
+    });
+
+    const eventsHTML = dayEvents.length
+      ? dayEvents.map(ev => `
+          <div class="weekly-event">
+            <span>${ev.title}</span>
+            <button onclick="window.location.href='/editar.html?id=${ev.id}'">Editar</button>
+          </div>
+        `).join("")
+      : `<span style="color:#666; font-size:0.85rem;">Nenhum evento</span>`;
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${day.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric" })} 
+          ${new Date().toDateString() === day.toDateString() ? '<span class="today-badge">Hoje</span>' : ''}
+        </td>
+        <td>${eventsHTML}</td>
+      </tr>`;
+  }
+}
+
+// Navegação
+document.addEventListener("DOMContentLoaded", async () => {
+  document.getElementById("prevWeek").onclick = () => {
+    currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+    renderWeeklyView();
+  };
+
+  document.getElementById("nextWeek").onclick = () => {
+    currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+    renderWeeklyView();
+  };
+
+  try {
+    eventosSemana = await eventAPI.getAllEvents();
+    renderWeeklyView();
+  } catch (err) {
+    console.error("[Weekly] Falha ao carregar eventos:", err);
+  }
+});
+
 }); // fecha o DOMContentLoaded

@@ -1356,13 +1356,15 @@ label {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(0, 56, 89, 0.1);
 }
-/* ===== Weekly Dashboard ===== */
+
+/* ===== Weekly View (Agenda Semanal) ===== */
 .weekly-section {
   background: #fff;
   border-radius: 1rem;
   padding: 1.5rem;
   margin-bottom: 2rem;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  border: 1px solid #e5e7eb;
 }
 
 .weekly-header {
@@ -1374,7 +1376,8 @@ label {
 
 .weekly-header h2 {
   font-size: 1.25rem;
-  color: #003859;
+  font-weight: 600;
+  color: var(--primary-color);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -1387,51 +1390,45 @@ label {
 }
 
 .week-controls button {
-  background: #f1f5f9;
-  border: none;
+  background: var(--background);
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.4rem 0.75rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .week-controls button:hover {
-  background: #e2e8f0;
+  background: var(--border);
 }
 
 .week-controls span {
   font-weight: 600;
-  color: #333;
+  color: var(--text-color);
 }
 
-/* ===== Weekly Table ===== */
+/* Tabela semanal */
 .weekly-table {
   width: 100%;
   border-collapse: collapse;
-  border-radius: 0.75rem;
-  overflow: hidden;
 }
 
 .weekly-table th, 
 .weekly-table td {
-  padding: 0.75rem 1rem;
+  padding: 0.75rem;
   border-bottom: 1px solid #e5e7eb;
-  text-align: left;
   vertical-align: top;
+  text-align: left;
 }
 
 .weekly-table th {
   background: #f8fafc;
   font-weight: 600;
-  color: #003859;
-}
-
-.weekly-table tr:last-child td {
-  border-bottom: none;
+  color: var(--primary-color);
 }
 
 /* Eventos */
-.event-item {
+.weekly-event {
   background: #f1f5f9;
   border-radius: 0.5rem;
   padding: 0.4rem 0.6rem;
@@ -1442,12 +1439,12 @@ label {
   align-items: center;
 }
 
-.event-item span {
+.weekly-event span {
   font-weight: 500;
   color: #333;
 }
 
-.event-item button {
+.weekly-event button {
   font-size: 0.75rem;
   border: none;
   background: #fff;
@@ -1458,13 +1455,13 @@ label {
   transition: background 0.2s;
 }
 
-.event-item button:hover {
+.weekly-event button:hover {
   background: #f8fafc;
 }
 
 /* Badge para hoje */
 .today-badge {
-  background: #003859;
+  background: var(--primary-color);
   color: #fff;
   padding: 0.15rem 0.5rem;
   border-radius: 0.5rem;
@@ -1478,11 +1475,12 @@ label {
     padding: 0.5rem;
     font-size: 0.8rem;
   }
-  .event-item {
+  .weekly-event {
     font-size: 0.75rem;
     flex-direction: column;
     align-items: flex-start;
     gap: 0.25rem;
   }
 }
+
 }
