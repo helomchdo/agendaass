@@ -2,6 +2,7 @@ import { eventAPI } from '../../services/api.js';
 console.log('[Monthly] script carregado');
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // === Monthly Calendar ===
   const calendarEl = document.getElementById('calendar');
   if (!calendarEl) {
     console.error('[Monthly] Não achei <div id="calendar"> no HTML.');
@@ -37,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = `/editar.html?id=${event.id}`;
       };
     }
-  }); // fecha a configuração do calendário
+  });
 
   calendar.render();
 
@@ -60,57 +61,57 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch (err) {
     console.error('[Monthly] Falha ao carregar eventos:', err);
   }
-  // ===== Weekly Agenda =====
-let eventosSemana = [];
-let currentWeekStart = new Date();
 
-function getWeekRange(date) {
-  const start = new Date(date);
-  start.setDate(start.getDate() - start.getDay()); // domingo
-  const end = new Date(start);
-  end.setDate(end.getDate() + 6); // sábado
-  return { start, end };
-}
+  // === Weekly Agenda ===
+  let eventosSemana = [];
+  let currentWeekStart = new Date();
 
-function renderWeeklyView() {
-  const { start, end } = getWeekRange(currentWeekStart);
-  const tbody = document.getElementById("weeklyTableBody");
-  if (!tbody) return; // segurança
-  tbody.innerHTML = "";
-
-  document.getElementById("weekRangeLabel").textContent =
-    `${start.toLocaleDateString("pt-BR")} - ${end.toLocaleDateString("pt-BR")}`;
-
-  for (let i = 0; i < 7; i++) {
-    const day = new Date(start);
-    day.setDate(start.getDate() + i);
-
-    const dayEvents = eventosSemana.filter(ev => {
-      const evDate = new Date(ev.start);
-      return evDate.toDateString() === day.toDateString();
-    });
-
-    const eventsHTML = dayEvents.length
-      ? dayEvents.map(ev => `
-          <div class="weekly-event">
-            <span>${ev.title}</span>
-            <button onclick="window.location.href='/editar.html?id=${ev.id}'">Editar</button>
-          </div>
-        `).join("")
-      : `<span style="color:#666; font-size:0.85rem;">Nenhum evento</span>`;
-
-    tbody.innerHTML += `
-      <tr>
-        <td>${day.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric" })}
-          ${new Date().toDateString() === day.toDateString() ? '<span class="today-badge">Hoje</span>' : ''}
-        </td>
-        <td>${eventsHTML}</td>
-      </tr>`;
+  function getWeekRange(date) {
+    const start = new Date(date);
+    start.setDate(start.getDate() - start.getDay()); // domingo
+    const end = new Date(start);
+    end.setDate(end.getDate() + 6); // sábado
+    return { start, end };
   }
-}
 
-document.addEventListener("DOMContentLoaded", async () => {
-  // Botões de navegação semanal
+  function renderWeeklyView() {
+    const { start, end } = getWeekRange(currentWeekStart);
+    const tbody = document.getElementById("weeklyTableBody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+
+    document.getElementById("weekRangeLabel").textContent =
+      `${start.toLocaleDateString("pt-BR")} - ${end.toLocaleDateString("pt-BR")}`;
+
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(start);
+      day.setDate(start.getDate() + i);
+
+      const dayEvents = eventosSemana.filter(ev => {
+        const evDate = new Date(ev.start);
+        return evDate.toDateString() === day.toDateString();
+      });
+
+      const eventsHTML = dayEvents.length
+        ? dayEvents.map(ev => `
+            <div class="weekly-event">
+              <span>${ev.title}</span>
+              <button onclick="window.location.href='/editar.html?id=${ev.id}'">Editar</button>
+            </div>
+          `).join("")
+        : `<span style="color:#666; font-size:0.85rem;">Nenhum evento</span>`;
+
+      tbody.innerHTML += `
+        <tr>
+          <td>${day.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric" })}
+            ${new Date().toDateString() === day.toDateString() ? '<span class="today-badge">Hoje</span>' : ''}
+          </td>
+          <td>${eventsHTML}</td>
+        </tr>`;
+    }
+  }
+
+  // Weekly navigation buttons
   const prevBtn = document.getElementById("prevWeek");
   const nextBtn = document.getElementById("nextWeek");
 
@@ -127,12 +128,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    // pega os eventos da mesma API do mensal
     eventosSemana = await eventAPI.getAllEvents();
     renderWeeklyView();
   } catch (err) {
     console.error("[Weekly] Falha ao carregar eventos:", err);
   }
 });
-
-}); // fecha o DOMContentLoaded
