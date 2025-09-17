@@ -100,14 +100,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     const eventsHTML = dayEvents.length
-      ? dayEvents.map(ev => `
-          <div class="weekly-event">
-            <span>${ev.title}</span>
-            <button onclick="window.location.href='/editar.html?id=${ev.id}'">Editar</button>
-          </div>
-        `).join("")
-      : `<span style="color:#666; font-size:0.85rem;">Nenhum evento</span>`;
-
+  ? dayEvents.map(ev => `
+      <div class="weekly-event">
+        <span>${ev.title}</span>
+        <button class="btn-primary view-more-btn" data-id="${ev.id}">Ver Mais</button>
+      </div>
+    `).join("")
+  : `<span style="color:#666; font-size:0.85rem;">Nenhum evento</span>`;
     grid.innerHTML += `
       <div class="weekly-day-col">
         <div class="weekly-day-label">
@@ -136,7 +135,27 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderWeeklyView();
     };
   }
-
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('view-more-btn')) {
+    const id = e.target.getAttribute('data-id');
+    const evento = eventosSemana.find(ev => ev.id == id);
+    if (evento) {
+      // Mostra o modal/card com detalhes
+      document.getElementById("eventModal").innerHTML = `
+        <div class="modal-content">
+          <button class="close" onclick="document.getElementById('eventModal').style.display='none'">&times;</button>
+          <h3>${evento.title}</h3>
+          <p><strong>Data:</strong> ${evento.start ? new Date(evento.start).toLocaleDateString() : 'N/A'}</p>
+          <p><strong>Local:</strong> ${evento.extendedProps.location || 'N/A'}</p>
+          <p><strong>Responsável:</strong> ${evento.extendedProps.focal_point || 'N/A'}</p>
+          <p><strong>SEI:</strong> ${evento.extendedProps.sei || 'N/A'}</p>
+          <p><strong>Status:</strong> ${evento.extendedProps.status || 'N/A'}</p>
+        </div>
+      `;
+      document.getElementById("eventModal").style.display = "block";
+    }
+  }
+});
   // Renderizar a visão semanal após carregar os eventos
   renderWeeklyView();
 });
