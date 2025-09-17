@@ -1628,3 +1628,17 @@ label {
     display: flex;
   }
 }
+@media (min-width: 901px) {
+  .container {
+    max-width: 1200px;
+    padding: 0 2rem;
+  }
+  .card {
+    width: 100%;
+    max-width: none;
+    padding: 2rem;
+  }
+  .weekly-section {
+    overflow-x: auto;
+  }
+}
