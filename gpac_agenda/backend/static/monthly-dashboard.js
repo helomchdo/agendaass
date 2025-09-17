@@ -80,44 +80,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     return { start, end };
   }
 
-  function renderWeeklyView() {
-    const { start, end } = getWeekRange(currentWeekStart);
-    const tbody = document.getElementById("weeklyTableBody");
-    if (!tbody) return;
-    tbody.innerHTML = "";
+ function renderWeeklyView() {
+  const { start, end } = getWeekRange(currentWeekStart);
+  const grid = document.getElementById("weeklyDaysGrid");
+  if (!grid) return;
+  grid.innerHTML = "";
 
-    document.getElementById("weekRangeLabel").textContent =
-      `${start.toLocaleDateString("pt-BR")} - ${end.toLocaleDateString("pt-BR")}`;
+  document.getElementById("weekRangeLabel").textContent =
+    `${start.toLocaleDateString("pt-BR")} - ${end.toLocaleDateString("pt-BR")}`;
 
-    for (let i = 0; i < 7; i++) {
-      const day = new Date(start);
-      day.setDate(start.getDate() + i);
+  for (let i = 0; i < 7; i++) {
+    const day = new Date(start);
+    day.setDate(start.getDate() + i);
 
-      const dayEvents = eventosSemana.filter(ev => {
-        if (!ev.start) return false;
-        const evDate = new Date(ev.start);
-        return evDate.toDateString() === day.toDateString();
-      });
+    const dayEvents = eventosSemana.filter(ev => {
+      if (!ev.start) return false;
+      const evDate = new Date(ev.start);
+      return evDate.toDateString() === day.toDateString();
+    });
 
-      const eventsHTML = dayEvents.length
-        ? dayEvents.map(ev => `
-            <div class="weekly-event">
-              <span>${ev.title}</span>
-              <button onclick="window.location.href='/editar.html?id=${ev.id}'">Editar</button>
-            </div>
-          `).join("")
-        : `<span style="color:#666; font-size:0.85rem;">Nenhum evento</span>`;
+    const eventsHTML = dayEvents.length
+      ? dayEvents.map(ev => `
+          <div class="weekly-event">
+            <span>${ev.title}</span>
+            <button onclick="window.location.href='/editar.html?id=${ev.id}'">Editar</button>
+          </div>
+        `).join("")
+      : `<span style="color:#666; font-size:0.85rem;">Nenhum evento</span>`;
 
-      tbody.innerHTML += `
-        <tr>
-          <td>${day.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric" })}
-            ${new Date().toDateString() === day.toDateString() ? '<span class="today-badge">Hoje</span>' : ''}
-          </td>
-          <td>${eventsHTML}</td>
-        </tr>`;
-    }
+    grid.innerHTML += `
+      <div class="weekly-day-col">
+        <div class="weekly-day-label">
+          ${day.toLocaleDateString("pt-BR", { weekday: "short", day: "numeric" })}
+          ${new Date().toDateString() === day.toDateString() ? '<span class="today-badge">Hoje</span>' : ''}
+        </div>
+        <div class="weekly-day-events">
+          ${eventsHTML}
+        </div>
+      </div>
+    `;
   }
-
+}
   // Weekly navigation buttons
   const prevBtn = document.getElementById("prevWeek");
   const nextBtn = document.getElementById("nextWeek");

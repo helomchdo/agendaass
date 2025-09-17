@@ -1574,4 +1574,57 @@ label {
     gap: 0.25rem;
     padding: 0.5rem;
   }
+}/* Weekly view grid for desktop */
+.weekly-days-grid {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: space-between;
+}
+
+.weekly-day-col {
+  flex: 1;
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  padding: 1rem 0.5rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.weekly-day-label {
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.weekly-day-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Mobile: volta para tabela */
+@media (max-width: 900px) {
+  .weekly-days-grid {
+    display: none;
+  }
+  .weekly-table {
+    display: table;
+  }
+}
+
+/* Desktop: esconde tabela */
+@media (min-width: 901px) {
+  .weekly-table {
+    display: none;
+  }
+  .weekly-days-grid {
+    display: flex;
+  }
 }
