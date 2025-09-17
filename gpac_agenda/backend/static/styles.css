@@ -1386,25 +1386,39 @@ label {
 .week-controls {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
+  font-size: 1.25rem;
 }
 
 .week-controls button {
-  background: var(--background);
-  border: 1px solid var(--border);
+  background: var(--primary-color);
+  color: var(--white);
+  border: none;
   border-radius: 0.5rem;
-  padding: 0.4rem 0.75rem;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+
 .week-controls button:hover {
-  background: var(--border);
+  background: var(--sucess);
+  transform: translateY(-2px);
+
 }
 
 .week-controls span {
-  font-weight: 600;
-  color: var(--text-color);
+  font-weight: 700;
+  color: var(--primary-color);
+  font-size: 1.25rem;
+  letter-spacing: 0.5px;
+  background: none;
+  padding:0 0.5rem;
 }
 
 /* Tabela semanal */
@@ -1649,4 +1663,19 @@ label {
 .weekly-header h2,
 .section-title {
   color: var(--primary-color) !important;
+}
+
+@media (min-width: 901px) {
+  .weekly-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  .week-controls {
+    margin-left: auto;
+    justify-content: flex-end;
+    align-items: center;
+    min-width: 340px;
+  }
 }
