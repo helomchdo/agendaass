@@ -1546,7 +1546,8 @@ label {
 .weekly-event span {
   font-weight: 500;
   color: #333;
-  flex: none;
+  display: flex;
+  flex-direction: column;
   margin-right: 0.75rem;
   text-align: center;
 }
