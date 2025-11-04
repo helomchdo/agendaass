@@ -1668,3 +1668,30 @@ label {
   color: var(--primary-color) !important;
 }
 
+
+#eventModal .close {
+  display: inline-block; /* X visível por padrão (mobile) */
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 1.25rem;
+  color: #0b3b55;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 50;
+}
+
+/* botão interno criado dinamicamente no JS (closeEventBtn) */
+#eventModal #closeEventBtn {
+  display: none; /* escondido no mobile */
+}
+
+/* Desktop: esconde o X e mostra o botão interno */
+@media (min-width: 901px) {
+  #eventModal .close { display: none; }
+  #eventModal #closeEventBtn { display: inline-block; }
+}
+
+
+
