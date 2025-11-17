@@ -1,21 +1,33 @@
 import { supabase } from './supabaseclient.js'
 
 document.getElementById('loginForm').addEventListener('submit', async (event) => {
-  event.preventDefault()
+  event.preventDefault();
 
-  const email = document.getElementById('email').value
-  const senha = document.getElementById('password').value
+  const email = document.getElementById('username').value.trim(); // usa id 'username' do index.html
+  const password = document.getElementById('password').value;
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: email,
-    password: senha
-  })
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
 
-  if (error) {
-    alert('Erro ao fazer login: ' + error.message)
-  } else {
-    alert('Login feito com sucesso!')
-    
-    window.location.href = 'daily-agenda.html'
+    const payload = await res.json();
+
+    if (!res.ok) {
+      alert(payload.error || 'Falha no login');
+      return;
+    }
+
+    // salvar token JWT
+    localStorage.setItem('token', payload.token);
+    // opcional: salvar usuário
+    if (payload.username) localStorage.setItem('username', payload.username);
+
+    window.location.href = 'daily-agenda.html';
+  } catch (err) {
+    console.error(err);
+    alert('Erro de rede ao tentar logar');
   }
-})
+});
