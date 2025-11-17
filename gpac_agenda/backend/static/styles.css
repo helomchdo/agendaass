@@ -1693,5 +1693,93 @@ label {
   #eventModal #closeEventBtn { display: inline-block; }
 }
 
+/* a partir daqui o dashboard semanal adptado para telas menores*/
+
+.weekly-section {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.weekly-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+/* ensure controls flow nicely on very small screens */
+.week-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Days grid: show as horizontal scrolling list on small screens */
+.weekly-days-grid {
+  display: flex !important;           /* force visible */
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+/* Each day column: fixed min width on mobile for readability */
+.weekly-day-col {
+  flex: 0 0 220px;                    /* fixed column width on mobile */
+  min-width: 220px;
+  max-width: 220px;
+  background: #A1B5F5; /* your chosen color */
+  border-radius: 0.75rem;
+  padding: 0.9rem;
+  box-shadow: 0 1px 4px rgba(11,59,85,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  scroll-snap-align: start;
+}
+
+/* small adjustments inside */
+.weekly-day-label { font-weight: 600; color: var(--primary-color); margin-bottom: 0.25rem; }
+.weekly-day-events { display:flex; flex-direction:column; gap:0.5rem; }
+
+/* Desktop: show all days side-by-side, equal width, no horizontal scrolling */
+@media (min-width: 901px) {
+  .weekly-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .weekly-days-grid {
+    overflow-x: visible;
+    gap: 1.5rem;
+    padding: 1rem 0;
+  }
+
+  .weekly-day-col {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: none;
+    padding: 1rem;
+  }
+}
+
+/* Improve appearance when overflowing parent card */
+.card, .weekly-section {
+  overflow: visible;
+}
+
+/* Accessibility: focus outlines on scrollable items */
+.weekly-day-col:focus { outline: 3px solid rgba(0,123,255,0.12); outline-offset: 4px; }
+
+/* Optional: hide native scrollbar in Webkit for cleaner look (still scrollable) */
+.weekly-days-grid::-webkit-scrollbar { height: 8px; }
+.weekly-days-grid::-webkit-scrollbar-thumb { background: rgba(11,59,85,0.12); border-radius: 6px; }
+
+/* small devices: reduce column width if needed */
+@media (max-width: 360px) {
+  .weekly-day-col { flex: 0 0 180px; min-width: 180px; max-width: 180px; padding: 0.75rem; }
+}
 
 
