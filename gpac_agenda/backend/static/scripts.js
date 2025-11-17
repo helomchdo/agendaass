@@ -1,9 +1,7 @@
-import { supabase } from './supabaseclient.js'
-
 document.getElementById('loginForm').addEventListener('submit', async (event) => {
   event.preventDefault();
 
-  const email = document.getElementById('username').value.trim(); // usa id 'username' do index.html
+  const email = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value;
 
   try {
@@ -13,18 +11,17 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
       body: JSON.stringify({ email, password })
     });
 
-    const payload = await res.json();
-
     if (!res.ok) {
-      alert(payload.error || 'Falha no login');
+      const text = await res.text().catch(() => "");
+      console.error('/api/login error', res.status, text);
+      let jsonBody = {};
+      try { jsonBody = JSON.parse(text); } catch {}
+      alert(jsonBody.error || `Erro no login (status ${res.status})`);
       return;
     }
 
-    // salvar token JWT
+    const payload = await res.json();
     localStorage.setItem('token', payload.token);
-    // opcional: salvar usuário
-    if (payload.username) localStorage.setItem('username', payload.username);
-
     window.location.href = 'daily-agenda.html';
   } catch (err) {
     console.error(err);
